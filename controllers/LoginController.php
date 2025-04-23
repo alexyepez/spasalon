@@ -40,17 +40,17 @@ class LoginController {
                 $alertas = Usuario::getAlertas();
             } else {
                 // Hashear la contraseña
-                debuguear('Usuario no existe, se puede registrar');
-                
-                /*
+                //debuguear('Usuario no existe, se puede registrar');
                 $usuario->password = password_hash($usuario->password, PASSWORD_BCRYPT);
                 $usuario->rol_id = 1; // Cliente
                 $usuario->confirmado = 0;
 
                 $resultado = $usuario->guardar();
                 if ($resultado['resultado']) {
-                    $query = "INSERT INTO clientes (usuario_id, telefono, direccion) VALUES ('" . self::$db->escape_string($resultado['id']) . "', '" . self::$db->escape_string($usuario->telefono) . "', NULL)";
-                    $insert_cliente = self::$db->query($query);
+                    // Importar $db desde database.php
+                    global $db;
+                    $query = "INSERT INTO clientes (usuario_id, telefono, direccion) VALUES ('" . $db->escape_string($resultado['id']) . "', '" . $db->escape_string($usuario->telefono) . "', NULL)";
+                    $insert_cliente = $db->query($query);
                     if ($insert_cliente) {
                         header("Location: /login?registro=exitoso");
                         exit;
@@ -60,7 +60,6 @@ class LoginController {
                 } else {
                     $alertas['error'][] = 'Error al registrar el usuario';
                 }
-                */
             }
         }
     }
