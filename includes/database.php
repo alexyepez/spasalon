@@ -1,6 +1,6 @@
 <?php
 
-
+/*
 try {
     $db = new PDO('mysql:host=localhost;dbname=spasalon', 'root', 'root');
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -10,8 +10,9 @@ try {
     echo "Error de depuración: " . $e->getMessage();
     exit;
 }
+    */
 
-/*
+// Conexión a la base de datos
 $db = mysqli_connect('localhost', 'root', 'root', 'spasalon');
 
 

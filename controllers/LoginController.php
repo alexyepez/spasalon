@@ -27,22 +27,46 @@ class LoginController {
     }
 
     public static function crear(Router $router) {
-        $usuario = new Usuario;
+    $usuario = new Usuario;
+    $alertas = [];
 
-        // Alertas vacías
-        $alertas = [];
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $usuario->sincronizar($_POST);
+        $alertas = $usuario->validarNuevaCuenta();
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Crear una nueva cuenta
-            $usuario->sincronizar($_POST);
-            $alertas = $usuario->validarNuevaCuenta();
+        if (empty($alertas)) {
+            $resultado = $usuario->existeUsuario();
+            if ($resultado->num_rows) {
+                $alertas = Usuario::getAlertas();
+            } else {
+                // Hashear la contraseña
+                debuguear('Usuario no existe, se puede registrar');
+                
+                /*
+                $usuario->password = password_hash($usuario->password, PASSWORD_BCRYPT);
+                $usuario->rol_id = 1; // Cliente
+                $usuario->confirmado = 0;
 
-
+                $resultado = $usuario->guardar();
+                if ($resultado['resultado']) {
+                    $query = "INSERT INTO clientes (usuario_id, telefono, direccion) VALUES ('" . self::$db->escape_string($resultado['id']) . "', '" . self::$db->escape_string($usuario->telefono) . "', NULL)";
+                    $insert_cliente = self::$db->query($query);
+                    if ($insert_cliente) {
+                        header("Location: /login?registro=exitoso");
+                        exit;
+                    } else {
+                        $alertas['error'][] = 'Error al registrar el cliente';
+                    }
+                } else {
+                    $alertas['error'][] = 'Error al registrar el usuario';
+                }
+                */
+            }
         }
-        $router->render('auth/crear-cuenta', [
-            'usuario' => $usuario,
-            'alertas' => $alertas
-
-        ]);
     }
+    $router->render('auth/crear-cuenta', [
+        'usuario' => $usuario,
+        'alertas' => $alertas
+    ]);
+}
 }

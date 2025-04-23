@@ -171,5 +171,4 @@ class ActiveRecord {
         $resultado = self::$db->query($query);
         return $resultado;
     }
-
 }
