@@ -24,8 +24,8 @@ class Usuario extends ActiveRecord {
         $this->email = $args['email'] ?? '';
         $this->password = $args['password'] ?? '';
         $this->telefono = $args['telefono'] ?? '';
-        $this->rol_id = $args['rol_id'] ?? null;
-        $this->confirmado = $args['confirmado'] ?? null;
+        $this->rol_id = $args['rol_id'] ?? 1; // Rol cliente por defecto
+        $this->confirmado = $args['confirmado'] ?? 0; // 0 no confirmado, 1 confirmado
         $this->token = $args['token'] ?? '';
     }
 
@@ -43,6 +43,22 @@ class Usuario extends ActiveRecord {
         if (!$this->telefono) {
             self::$alertas['error'][] = 'El Teléfono del Cliente es Obligatorio';
         }
+        if (!$this->password) {
+            self::$alertas['error'][] = 'El Password del Cliente es Obligatorio';
+        } elseif (strlen($this->password) < 6) {
+            self::$alertas['error'][] = 'El Password debe tener al menos 6 caracteres';
+        }
         return self::$alertas;
     }
+
+    
+    public function existeUsuario() {
+        $query = "SELECT * FROM " . static::$tabla . " WHERE email = '" . self::$db->escape_string($this->email) . "' LIMIT 1";
+        $resultado = self::$db->query($query);
+        if ($resultado->num_rows) {
+            static::$alertas['error'][] = 'El email ya está registrado';
+        }
+        return $resultado;
+    }
+
 }
