@@ -1,5 +1,13 @@
+<?php
+// $exito se pasa desde LoginController::login
+?>
+
 <h1 class="nombre-pagina">Login</h1>
 <p class="descripcion-pagina">Inicia sesión con tus datos</p>
+
+<?php if ($exito): ?>
+    <div class="alerta exito">¡Registro exitoso! Por favor, inicia sesión.</div>
+<?php endif; ?>
 
 <form class="formulario" method="POST" action="/">
     <div class="campo">

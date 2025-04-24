@@ -9,7 +9,10 @@ $router = new Router();
 // Iniciar Sesión
 $router->get('/', [LoginController::class, 'login']);
 $router->post('/', [LoginController::class, 'login']);
+$router->post('/login', [LoginController::class, 'login']);
+$router->get('/login', [LoginController::class, 'login']);
 $router->get('/logout', [LoginController::class, 'logout']);
+
 
 
 // Recuperar password

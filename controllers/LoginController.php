@@ -8,7 +8,10 @@ use MVC\Router;
 
 class LoginController {
     public static function login(Router $router) {
-        $router->render('auth/login');
+        $exito = isset($_GET['registro']) && $_GET['registro'] === 'exitoso';
+        $router->render('auth/login', [
+            'exito' => $exito
+        ]);
     }
 
     public static function logout() {
@@ -44,7 +47,6 @@ class LoginController {
                 $usuario->password = password_hash($usuario->password, PASSWORD_BCRYPT);
                 $usuario->rol_id = 1; // Cliente
                 $usuario->confirmado = 0;
-
                 $resultado = $usuario->guardar();
                 if ($resultado['resultado']) {
                     // Importar $db desde database.php
