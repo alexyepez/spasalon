@@ -75,6 +75,10 @@ class ActiveRecord {
         $atributos = $this->atributos();
         $sanitizado = [];
         foreach($atributos as $key => $value ) {
+            // Si el campo es token, eliminar espacios
+            if($key === 'token' && is_string($value)) {
+                $value = trim($value);
+            }
             $sanitizado[$key] = self::$db->escape_string($value);
         }
         return $sanitizado;
@@ -121,6 +125,13 @@ class ActiveRecord {
         $query = "SELECT * FROM " . static::$tabla . " LIMIT {$limite}";
         $resultado = self::consultarSQL($query);
         return array_shift( $resultado ) ;
+    }
+
+    // Obtener Registros por columna
+    public static function where($columna, $valor) {
+        $query = "SELECT * FROM " . static::$tabla  ." WHERE ${columna} = '{$valor}'";
+        $resultado = self::consultarSQL($query);
+        return array_shift( $resultado );
     }
 
     // crea un nuevo registro

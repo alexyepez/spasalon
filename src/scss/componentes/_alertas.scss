@@ -16,4 +16,12 @@
     &.exito {
         background-color: v.$verde;
     }
+
+    &.info {
+        background-color: v.$azul;
+    }
+
+    &.warning {
+        background-color: v.$amarillo;
+    }
 }

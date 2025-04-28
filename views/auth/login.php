@@ -1,9 +1,13 @@
 <?php
-// $exito se pasa desde LoginController::login
+$claseImagen = $claseImagen ?? 'imagen';
 ?>
 
 <h1 class="nombre-pagina">Login</h1>
 <p class="descripcion-pagina">Inicia sesión con tus datos</p>
+
+<?php 
+    include_once __DIR__ . '/../templates/alertas.php';
+?>
 
 <?php if ($exito): ?>
     <div class="alerta exito">¡Registro exitoso! Por favor, inicia sesión.</div>
@@ -17,6 +21,7 @@
             id="email" 
             placeholder="Tu email"
             name="email"
+            value="<?php echo s($auth->email); ?>"
         />
     </div>
 

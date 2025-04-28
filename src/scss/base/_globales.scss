@@ -5,6 +5,7 @@ html {
     box-sizing: border-box;
     height: 100%;
 }
+
 body {
     min-height: 100%;
     display: flex;
@@ -12,18 +13,22 @@ body {
     background-color: v.$negro;
     color: v.$blanco;
 }
+
 *, *:before, *:after {
     box-sizing: inherit;
 }
+
 body {
     font-family: v.$fuente_principal;
     font-size: 1.6rem;
 }
+
 .contenedor {
     width: 95%;
     max-width: 1200px;
     margin: 0 auto;
 }
+
 a {
     text-decoration: none;
 }

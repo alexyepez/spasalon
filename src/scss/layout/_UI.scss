@@ -18,6 +18,16 @@
         }
     }
 
+    .imagen-landing {
+        height: 20rem;
+        background-image: url(../img/inicio1.png);
+        background-size: cover;
+        background-position: center center;
+        @include m.tablet {
+            height: auto;
+        }
+    }
+
     .app {
         width: 95%;
         margin: 0 auto;

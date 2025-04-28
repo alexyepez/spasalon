@@ -24,7 +24,7 @@ class Usuario extends ActiveRecord {
         $this->email = $args['email'] ?? '';
         $this->password = $args['password'] ?? '';
         $this->telefono = $args['telefono'] ?? '';
-        $this->rol_id = $args['rol_id'] ?? 1; // Rol cliente por defecto
+        $this->rol_id = $args['rol_id'] ?? 3; // Rol cliente por defecto
         $this->confirmado = $args['confirmado'] ?? 0; // 0 no confirmado, 1 confirmado
         $this->token = $args['token'] ?? '';
     }
@@ -51,16 +51,68 @@ class Usuario extends ActiveRecord {
         return self::$alertas;
     }
 
+    // Validar el login de un usuario
+    public function validarLogin() {
+        if (!$this->email) {
+            self::$alertas['error'][] = 'El Email  es Obligatorio';
+        }
+        if (!$this->password) {
+            self::$alertas['error'][] = 'El Password  es Obligatorio';
+        }
+        return self::$alertas;
+    }
+
+    // Validar el email
+    public function validarEmail() {
+        if (!$this->email) {
+            self::$alertas['error'][] = 'El Email  es Obligatorio';
+        }
+        return self::$alertas;
+    }
+
+    // Validar el password
+    public function validarPassword() {
+        if (!$this->password) {
+            self::$alertas['error'][] = 'La contraseña es Obligatoria';
+        } 
+        if (strlen($this->password) < 6) {
+            self::$alertas['error'][] = 'La contraseña debe tener al menos 6 caracteres';
+        }
+        return self::$alertas;
+    }
+
     // Revisa si el usuario existe
     public function existeUsuario() {
-        //$query = " SELECT * FROM " . self::$tabla . " WHERE email = '" . $this->email . "' LIMIT 1";
-        $email = self::$db->escape_string($this->email);
-        $query = "SELECT * FROM " . self::$tabla . " WHERE email = '$email' LIMIT 1";
+        $query = " SELECT * FROM " . self::$tabla . " WHERE email = '" . $this->email . "' LIMIT 1";
+        //$email = self::$db->escape_string($this->email);
+        //$query = "SELECT * FROM " . self::$tabla . " WHERE email = '$email' LIMIT 1";
         $resultado = self::$db->query($query);
         if ($resultado->num_rows) {
             self::$alertas['error'][] = 'El email ya está registrado';
         }
         return $resultado;
+    }
+
+    // Hashear la contraseña
+    public function hashPassword() {
+        $this->password = password_hash($this->password, PASSWORD_BCRYPT);
+    }
+
+    // Crear Token
+    public function crearToken() {
+        $this->token = trim(uniqid());
+    }
+
+    // Comprobar el password
+    public function comprobarPasswordAndVerificado($password) {
+        //return password_verify($password, $this->password) && $this->confirmado == 1;
+        $resultado = password_verify($password, $this->password);
+
+        if (!$resultado || !$this->confirmado) {
+            self::$alertas['error'][] = 'El Password es Incorrecto o la cuenta no ha sido confirmada';
+        } else {
+            return true;
+        }
     }
 
 }
