@@ -29,27 +29,28 @@
                 value="<?php echo $nombre ?? ''; ?>"
                 disabled
                 />
-                
             </div>
             
             <div class="campo">
                 <label for="fecha">Fecha de la cita</label>
-                <input type="date" id="fecha" name="fecha">
-                <!-- min="<?php echo date('Y-m-d', strtotime('+1 day') ); ?>" -->
+                <input type="date" id="fecha" name="fecha"
+                min="<?php echo date('Y-m-d', strtotime('+1 day') ); ?>"
+                />
             </div>
 
             <div class="campo">
                 <label for="hora">Hora de la cita</label>
-                <input id="hora" type="time" name="hora">
-                
+                <input id="hora" 
+                type="time" name="hora"
+                />
             </div>
-
-            <input type="submit" value="Reservar Cita">
+            <!-- Campo para seleccionar el terapeuta -->
+            <!--input type="submit" value="Reservar Cita"-->
 
         </form>
     </div>
 
-    <div id="paso-3" class="seccion">
+    <div id="paso-3" class="seccion contenido-resumen">
         <h2>Resumen</h2>
         <p class="text-center">Verifica que la información sea correcta</p>
     </div>

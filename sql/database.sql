@@ -18,7 +18,7 @@ CREATE TABLE usuarios (
     telefono VARCHAR(15) DEFAULT NULL,
     rol_id INT NOT NULL,
     confirmado TINYINT(1) DEFAULT 0,
-    token VARCHAR(15) DEFAULT NULL,
+    token VARCHAR(13) DEFAULT NULL,
     FOREIGN KEY (rol_id) REFERENCES roles(id) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

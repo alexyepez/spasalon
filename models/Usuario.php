@@ -114,5 +114,4 @@ class Usuario extends ActiveRecord {
             return true;
         }
     }
-
 }
