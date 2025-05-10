@@ -96,7 +96,7 @@ class ActiveRecord {
     // Registros - CRUD
     public function guardar() {
         $resultado = '';
-        if(!is_null($this->id)) {
+        if(!empty($this->id)) {
             // actualizar
             $resultado = $this->actualizar();
         } else {
@@ -127,11 +127,29 @@ class ActiveRecord {
         return array_shift( $resultado ) ;
     }
 
-    // Obtener Registros por columna
+    // Obtener Registros por columna Devuelve solo el primer objeto
     public static function where($columna, $valor) {
         $query = "SELECT * FROM " . static::$tabla  ." WHERE ${columna} = '{$valor}'";
         $resultado = self::consultarSQL($query);
         return array_shift( $resultado );
+    }
+
+    // Obtener todos los registros por columna Devuelve un array con todos los objetos que cumplen la condición
+    public static function whereAll($columna, $valor) {
+        $query = "SELECT * FROM " . static::$tabla  ." WHERE ${columna} = '{$valor}'";
+        $resultado = self::consultarSQL($query);
+        return $resultado; // Retorna el array completo de objetos
+    }
+
+    // Obtener todos los registros por varias columnas
+    public static function whereAllMultiple($condiciones) {
+        $condicionesSQL = [];
+        foreach ($condiciones as $columna => $valor) {
+            $condicionesSQL[] = "${columna} = '" . self::$db->escape_string($valor) . "'";
+        }
+        $query = "SELECT * FROM " . static::$tabla . " WHERE " . implode(' AND ', $condicionesSQL);
+        $resultado = self::consultarSQL($query);
+        return $resultado;
     }
 
     // crea un nuevo registro
@@ -140,18 +158,22 @@ class ActiveRecord {
         $atributos = $this->sanitizarAtributos();
 
         // Insertar en la base de datos
-        $query = " INSERT INTO " . static::$tabla . " ( ";
+        $query = "INSERT INTO " . static::$tabla . " (";
         $query .= join(', ', array_keys($atributos));
-        $query .= " ) VALUES (' "; 
+        $query .= ") VALUES ('";
         $query .= join("', '", array_values($atributos));
-        $query .= " ') ";
+        $query .= "')";
+
+        // Ejecutar la consulta
+        $resultado = self::$db->query($query);
 
         // Resultado de la consulta
-        $resultado = self::$db->query($query);
         return [
-           'resultado' =>  $resultado,
-           'id' => self::$db->insert_id
+        'resultado' =>  $resultado,
+        'id' => self::$db->insert_id,
+        'query' => $query
         ];
+
     }
 
     // Actualizar el registro

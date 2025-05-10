@@ -177,7 +177,7 @@ CREATE TABLE `familiares` (
   PRIMARY KEY (`id`),
   KEY `cliente_id` (`cliente_id`),
   CONSTRAINT `familiares_ibfk_1` FOREIGN KEY (`cliente_id`) REFERENCES `clientes` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -186,6 +186,7 @@ CREATE TABLE `familiares` (
 
 LOCK TABLES `familiares` WRITE;
 /*!40000 ALTER TABLE `familiares` DISABLE KEYS */;
+INSERT INTO `familiares` VALUES (1,1,'Lusiana','Cardona','Prima','2010-10-10','3206495589');
 /*!40000 ALTER TABLE `familiares` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -430,4 +431,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-05-08 18:03:44
+-- Dump completed on 2025-05-09 19:01:35

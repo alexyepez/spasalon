@@ -159,9 +159,21 @@ function seleccionarServicio(servicio) {
     }
 }
 
+/*
 function nombreCliente() {  
-    const nombre = document.querySelector('#nombre').value;
+    const nombre = document.querySelector('#cliente').value;
     cita.nombre = nombre; // Asigna el valor del input al objeto cita
+}
+*/
+
+function nombreCliente() {  
+    const select = document.querySelector('#persona');
+    const nombre = select.options[select.selectedIndex].textContent;
+    cita.nombre = nombre;
+    select.addEventListener('change', function() {
+        const nombre = select.options[select.selectedIndex].textContent;
+        cita.nombre = nombre;
+    });
 }
 
 function seleccionarFecha() {
@@ -184,7 +196,7 @@ function seleccionarHora() {
         const hora = horaCita.split(':'); // Separa la hora y los minutos
         if (hora[0] < 10 || hora[0] > 18) {
             e.target.value = ''; // Si la hora es menor a 10 o mayor a 18, se limpia el campo de hora
-            mostrarAlerta('La cita debe estar entre las 10:00 y las 18:00', 'error', '.formulario');
+            mostrarAlerta('La cita debe estar entre las 10:00 am y las 6:00 pm', 'error', '.formulario');
         } else {
             cita.hora = e.target.value; // Asigna la hora al objeto cita
         }
@@ -195,7 +207,7 @@ function mostrarAlerta(mensaje, tipo, elemento, desaparece = true) {
     // Elimina la alerta anterior si existe
     const alertaPrevia = document.querySelector('.alerta'); // Selecciona la alerta anterior
     if (alertaPrevia) {
-        alertaPrevia.remove; // Si existe, la elimina
+        alertaPrevia.remove(); // Si existe, la elimina
         // alertaPrevia.remove(); // Elimina la alerta anterior si existe (otra forma de hacerlo)
     }
 

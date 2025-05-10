@@ -18,7 +18,47 @@
     <div id="paso-2" class="seccion">
         <h2>Tus datos y cita</h2>
         <p class="text-center">Ingresa tus datos y fecha de tu cita</p>
+
+        <section class="familiares">
+            <h3>Mis familiares</h3>
+            <!-- Aquí se mostrará la alerta general -->
+            <div id="alerta-familiares"></div>
+            <button id="btn-agregar-familiar" class="boton boton-agregar" type="button">Agregar Familiar</button>
+            <ul id="lista-familiares"></ul>
+        </section>
+
+        <!-- Modal para agregar/editar familiar -->
+        <div id="modal-familiar" class="modal-familiar" style="display:none;">
+            <form id="form-familiar" class="formulario">
+                <div id="alerta-modal"></div>
+                <input type="hidden" name="id" id="familiar-id">
+                <div class="campo">
+                    <label for="familiar-nombre">Nombre:</label>
+                    <input type="text" name="nombre" id="familiar-nombre" required>
+                </div>
+                <div class="campo">
+                    <label for="familiar-apellido">Apellido:</label>
+                    <input type="text" name="apellido" id="familiar-apellido" required>
+                </div>
+                <div class="campo">
+                    <label for="familiar-parentesco">Parentesco:</label>
+                    <input type="text" name="parentesco" id="familiar-parentesco" required>
+                </div>
+                <div class="campo">
+                    <label for="familiar-fecha-nacimiento">Fecha de nacimiento:</label>
+                    <input type="date" name="fecha_nacimiento" id="familiar-fecha-nacimiento">
+                </div>
+                <div class="campo">
+                    <label for="familiar-telefono">Teléfono:</label>
+                    <input type="text" name="telefono" id="familiar-telefono">
+                </div>
+                <button type="submit" class="boton">Guardar</button>
+                <button type="button" id="btn-cerrar-modal" class="boton boton-cancelar">Cancelar</button>
+            </form>
+        </div>
+
         <form class="formulario">
+            <!-- 
             <div class="campo">
                 <label for="nombre">Nombre</label>
                 <input 
@@ -26,9 +66,21 @@
                 id="nombre" 
                 name="nombre" 
                 placeholder="Tu nombre"
-                value="<?php echo $nombre ?? ''; ?>"
+                value=" <?php /* echo $nombre ?? '';*/ ?>"
                 disabled
                 />
+            </div>
+            -->
+            <div class="campo">
+                <label for="persona">¿Para quién es la cita?</label>
+                <select id="persona" name="persona">
+                    <option value=" <?php echo htmlspecialchars($cliente->id); ?>"><?php echo htmlspecialchars($nombre); ?> (Tú)</option>
+                    <?php foreach ($familiares as $familiar): ?>
+                        <option value="<?php echo htmlspecialchars($familiar->id); ?>">
+                            <?php echo htmlspecialchars($familiar->nombre . ' ' . $familiar->apellido); ?> (<?php echo htmlspecialchars($familiar->parentesco); ?>)
+                        </option>
+                    <?php endforeach; ?>
+                </select>
             </div>
             
             <div class="campo">
@@ -62,8 +114,13 @@
     </div>
 </div>
 
+<script>
+    window.clienteId = "<?php echo htmlspecialchars($cliente->id); ?>";
+</script>
+
 <?php
     $script = "
     <script src='build/js/app.js'></script>
+    <script src='build/js/familiares.js'></script>
     ";
 ?>

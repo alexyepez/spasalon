@@ -39,6 +39,12 @@ $router->get('/terapeuta/dashboard', [TerapeutaController::class, 'dashboard']);
 $router->get('/confirmar-cuenta', [LoginController::class, 'confirmar']);
 $router->get('/mensaje', [LoginController::class, 'mensaje']);
 
+// Área de familiares
+$router->get('/api/familiares', [APIController::class, 'familiares']);
+$router->post('/api/familiares/crear', [APIController::class, 'crearFamiliar']);
+$router->post('/api/familiares/eliminar', [APIController::class, 'eliminarFamiliar']);
+$router->post('/api/familiares/actualizar', [APIController::class, 'actualizarFamiliar']);
+
 // AREA PRIVADA
 $router->get('/cita', [CitaController::class, 'index']);
 
