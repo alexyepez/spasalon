@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.2.0, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.18, for Win64 (x86_64)
 --
 -- Host: localhost    Database: spasalon
 -- ------------------------------------------------------
--- Server version	8.2.0
+-- Server version	8.0.41
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -26,16 +26,19 @@ CREATE TABLE `citas` (
   `id` int NOT NULL AUTO_INCREMENT,
   `cliente_id` int NOT NULL,
   `colaborador_id` int DEFAULT NULL,
+  `familiar_id` int DEFAULT NULL,
   `fecha` date NOT NULL,
   `hora` time NOT NULL,
   `estado` tinyint NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `cliente_id` (`cliente_id`),
   KEY `colaborador_id` (`colaborador_id`),
+  KEY `familiar_id` (`familiar_id`),
   CONSTRAINT `citas_ibfk_1` FOREIGN KEY (`cliente_id`) REFERENCES `clientes` (`id`) ON DELETE CASCADE,
   CONSTRAINT `citas_ibfk_2` FOREIGN KEY (`colaborador_id`) REFERENCES `colaboradores` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `citas_ibfk_3` FOREIGN KEY (`familiar_id`) REFERENCES `familiares` (`id`) ON DELETE SET NULL,
   CONSTRAINT `chk_estado` CHECK ((`estado` in (0,1,2)))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -44,6 +47,7 @@ CREATE TABLE `citas` (
 
 LOCK TABLES `citas` WRITE;
 /*!40000 ALTER TABLE `citas` DISABLE KEYS */;
+INSERT INTO `citas` VALUES (1,4,1,1,'2025-05-20','10:00:00',0),(2,4,1,2,'2025-05-28','11:00:00',0);
 /*!40000 ALTER TABLE `citas` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -63,7 +67,7 @@ CREATE TABLE `citas_servicios` (
   KEY `servicio_id` (`servicio_id`),
   CONSTRAINT `citas_servicios_ibfk_1` FOREIGN KEY (`cita_id`) REFERENCES `citas` (`id`) ON DELETE CASCADE,
   CONSTRAINT `citas_servicios_ibfk_2` FOREIGN KEY (`servicio_id`) REFERENCES `servicios` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -72,6 +76,7 @@ CREATE TABLE `citas_servicios` (
 
 LOCK TABLES `citas_servicios` WRITE;
 /*!40000 ALTER TABLE `citas_servicios` DISABLE KEYS */;
+INSERT INTO `citas_servicios` VALUES (1,1,1),(2,1,2),(3,2,7),(4,2,8),(5,2,9),(6,2,10);
 /*!40000 ALTER TABLE `citas_servicios` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -90,7 +95,7 @@ CREATE TABLE `clientes` (
   PRIMARY KEY (`id`),
   KEY `usuario_id` (`usuario_id`),
   CONSTRAINT `clientes_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -99,7 +104,7 @@ CREATE TABLE `clientes` (
 
 LOCK TABLES `clientes` WRITE;
 /*!40000 ALTER TABLE `clientes` DISABLE KEYS */;
-INSERT INTO `clientes` VALUES (1,2,'3113460775',' '),(2,3,'3105669793',' '),(3,4,'3206495589','');
+INSERT INTO `clientes` VALUES (1,1,'3152230758','Coodelmar 4'),(2,2,'3105669793',' '),(4,4,'3113460775',' '),(5,5,'3206495589','');
 /*!40000 ALTER TABLE `clientes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -156,7 +161,7 @@ CREATE TABLE `colaboradores` (
 
 LOCK TABLES `colaboradores` WRITE;
 /*!40000 ALTER TABLE `colaboradores` DISABLE KEYS */;
-INSERT INTO `colaboradores` VALUES (1,3,'Masajista'),(2,4,'Esteticista');
+INSERT INTO `colaboradores` VALUES (1,4,'Masajista'),(2,5,'Esteticista');
 /*!40000 ALTER TABLE `colaboradores` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -187,7 +192,7 @@ CREATE TABLE `familiares` (
 
 LOCK TABLES `familiares` WRITE;
 /*!40000 ALTER TABLE `familiares` DISABLE KEYS */;
-INSERT INTO `familiares` VALUES (1,1,'Lusiana','Cardona','Prima','2010-10-10','3206495589'),(2,1,'Lizeth','Cardon','Prima','2010-10-10',''),(3,1,'Rafael Augusto','Cardona','Primo','2005-10-10','');
+INSERT INTO `familiares` VALUES (1,4,'Lusiana','Cardona','Prima','2010-10-10',''),(2,4,'Lizeth','Cardona','Prima','2010-10-10',''),(3,4,'Rafael Augusto','Cardona','Primo','2005-10-10','');
 /*!40000 ALTER TABLE `familiares` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -410,7 +415,7 @@ CREATE TABLE `usuarios` (
   UNIQUE KEY `email` (`email`),
   KEY `rol_id` (`rol_id`),
   CONSTRAINT `usuarios_ibfk_1` FOREIGN KEY (`rol_id`) REFERENCES `roles` (`id`) ON DELETE RESTRICT
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -419,9 +424,13 @@ CREATE TABLE `usuarios` (
 
 LOCK TABLES `usuarios` WRITE;
 /*!40000 ALTER TABLE `usuarios` DISABLE KEYS */;
-INSERT INTO `usuarios` VALUES (1,'Alexander','Castañeda','ingalexander@gmail.com','1234567','3152230758',1,1,NULL),(2,'Alexander','Yepez','ingalexanderyepez@gmail.com','$2y$10$F2iyB.0VwSTUmWz21ySDfOYU7nhfJoq.W/Y9HzT3Cc2bgaD4camt6','3113460775',3,1,''),(3,'Yuliana','Del Cristo','yuliana.vera@utp.edu.co','$2y$10$V69KZXdVQEP3YfrAGbIR4uqyZGoVDowFIKhkmoS0Mf5QSEy7N.oCq','3105669793',2,1,''),(4,'Karla','Giraldo','terapeuta@spa.com','$2y$10$3HU2EjbjQDUy1nRdKVXJl.G4gAl.Z3vz.2zZoaPj6Vnga0VY5Ykxm','3206495589',2,1,'');
+INSERT INTO `usuarios` VALUES (1,'Alexander','Castañeda','ingalexander@gmail.com','1234567','3152230758',1,1,NULL),(2,'Yuliana','Del Cristo','yuliana.vera@utp.edu.co','$2y$10$j2Y5V3Kwm2N.hVwRQd2hXOTrMgZkZKKmDCxIoKIcsqFdZvQHIJgNi','3105669793',2,1,''),(4,'Alexander','Yepez','ingalexanderyepez@gmail.com','$2y$10$1Ys4vi1ZXT95kaiE7LODGOwjs77BHXgVSE65cgXD.lBGrPj.G1MV6','3113460775',3,1,''),(5,'Karla','Giraldo','terapeuta@spa.com','$2y$10$x4on58qSQQ.RTtZc26JsEOn/BA60zGEC75fu.MgFVi5Nxnu8HMM2C','3206495589',2,1,'');
 /*!40000 ALTER TABLE `usuarios` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Dumping routines for database 'spasalon'
+--
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -432,4 +441,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-05-11  1:03:44
+-- Dump completed on 2025-05-11  3:07:24

@@ -1,0 +1,19 @@
+@use 'base/variables' as v;
+
+#lista-citas {
+    list-style: none;
+    padding: 0;
+    margin: calc(v.$separacion / 2) 0;
+}
+
+.cita-item {
+    background-color: v.$blanco;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.cita-item p {
+    margin: 0.5rem 0;
+}

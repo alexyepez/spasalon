@@ -33,7 +33,7 @@ $router->get('/crear-cuenta', [LoginController::class, 'crear']);
 $router->post('/crear-cuenta', [LoginController::class, 'crear']);
 
 // Panel del Terapeuta
-$router->get('/terapeuta/dashboard', [TerapeutaController::class, 'dashboard']);
+$router->get('/terapeuta/index', [TerapeutaController::class, 'index']);
 
 // Confirmar cuenta
 $router->get('/confirmar-cuenta', [LoginController::class, 'confirmar']);

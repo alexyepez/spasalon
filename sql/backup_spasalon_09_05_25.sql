@@ -90,7 +90,7 @@ CREATE TABLE `clientes` (
   PRIMARY KEY (`id`),
   KEY `usuario_id` (`usuario_id`),
   CONSTRAINT `clientes_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -99,7 +99,7 @@ CREATE TABLE `clientes` (
 
 LOCK TABLES `clientes` WRITE;
 /*!40000 ALTER TABLE `clientes` DISABLE KEYS */;
-INSERT INTO `clientes` VALUES (1,2,'3113460775',' '),(2,3,'3105669793',' '),(3,4,'3206495589','');
+INSERT INTO `clientes` VALUES (1,2,'3113460775',' '),(2,3,'3105669793',' ');
 /*!40000 ALTER TABLE `clientes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -147,7 +147,7 @@ CREATE TABLE `colaboradores` (
   PRIMARY KEY (`id`),
   KEY `usuario_id` (`usuario_id`),
   CONSTRAINT `colaboradores_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -156,7 +156,6 @@ CREATE TABLE `colaboradores` (
 
 LOCK TABLES `colaboradores` WRITE;
 /*!40000 ALTER TABLE `colaboradores` DISABLE KEYS */;
-INSERT INTO `colaboradores` VALUES (1,3,'Masajista'),(2,4,'Esteticista');
 /*!40000 ALTER TABLE `colaboradores` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -178,7 +177,7 @@ CREATE TABLE `familiares` (
   PRIMARY KEY (`id`),
   KEY `cliente_id` (`cliente_id`),
   CONSTRAINT `familiares_ibfk_1` FOREIGN KEY (`cliente_id`) REFERENCES `clientes` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -187,7 +186,7 @@ CREATE TABLE `familiares` (
 
 LOCK TABLES `familiares` WRITE;
 /*!40000 ALTER TABLE `familiares` DISABLE KEYS */;
-INSERT INTO `familiares` VALUES (1,1,'Lusiana','Cardona','Prima','2010-10-10','3206495589'),(2,1,'Lizeth','Cardon','Prima','2010-10-10',''),(3,1,'Rafael Augusto','Cardona','Primo','2005-10-10','');
+INSERT INTO `familiares` VALUES (1,1,'Lusiana','Cardona','Prima','2010-10-10','3206495589');
 /*!40000 ALTER TABLE `familiares` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -410,7 +409,7 @@ CREATE TABLE `usuarios` (
   UNIQUE KEY `email` (`email`),
   KEY `rol_id` (`rol_id`),
   CONSTRAINT `usuarios_ibfk_1` FOREIGN KEY (`rol_id`) REFERENCES `roles` (`id`) ON DELETE RESTRICT
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -419,7 +418,7 @@ CREATE TABLE `usuarios` (
 
 LOCK TABLES `usuarios` WRITE;
 /*!40000 ALTER TABLE `usuarios` DISABLE KEYS */;
-INSERT INTO `usuarios` VALUES (1,'Alexander','Castañeda','ingalexander@gmail.com','1234567','3152230758',1,1,NULL),(2,'Alexander','Yepez','ingalexanderyepez@gmail.com','$2y$10$F2iyB.0VwSTUmWz21ySDfOYU7nhfJoq.W/Y9HzT3Cc2bgaD4camt6','3113460775',3,1,''),(3,'Yuliana','Del Cristo','yuliana.vera@utp.edu.co','$2y$10$V69KZXdVQEP3YfrAGbIR4uqyZGoVDowFIKhkmoS0Mf5QSEy7N.oCq','3105669793',2,1,''),(4,'Karla','Giraldo','terapeuta@spa.com','$2y$10$3HU2EjbjQDUy1nRdKVXJl.G4gAl.Z3vz.2zZoaPj6Vnga0VY5Ykxm','3206495589',2,1,'');
+INSERT INTO `usuarios` VALUES (1,'Alexander','Castañeda','ingalexander@gmail.com','1234567','3152230758',1,1,NULL),(2,'Alexander','Yepez','ingalexanderyepez@gmail.com','$2y$10$F2iyB.0VwSTUmWz21ySDfOYU7nhfJoq.W/Y9HzT3Cc2bgaD4camt6','3113460775',3,1,''),(3,' Yuliana','Del Cristo','yuliana.vera@utp.edu.co','$2y$10$V69KZXdVQEP3YfrAGbIR4uqyZGoVDowFIKhkmoS0Mf5QSEy7N.oCq','3105669793',2,1,'');
 /*!40000 ALTER TABLE `usuarios` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -432,4 +431,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-05-11  1:03:44
+-- Dump completed on 2025-05-09 19:01:35

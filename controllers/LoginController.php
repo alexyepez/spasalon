@@ -6,15 +6,10 @@ use Model\Usuario;
 use Model\Cliente;
 use MVC\Router;
 use Classes\Email;
+use Model\Colaborador;
 
 class LoginController {
     public static function login(Router $router) {
-        /*
-        $exito = isset($_GET['registro']) && $_GET['registro'] === 'exitoso';
-        $router->render('auth/login', [
-            'exito' => $exito
-        ]);
-        */
         $alertas = [];
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -33,19 +28,35 @@ class LoginController {
                         $_SESSION['nombre'] = $usuario->nombre . " " . $usuario->apellido;
                         $_SESSION['email'] = $usuario->email;
                         $_SESSION['login'] = true;
+                        $_SESSION['rol_id'] = $usuario->rol_id;
+
+                        // Debug: Verificar valores antes de redirección
+                        error_log("Usuario autenticado - ID: " . $usuario->id . ", Rol: " . $usuario->rol_id);
 
                         // Redireccionar al panel del administrador o terapeuta
                         if ($usuario->rol_id === '1') {
                             // Administrador
                             $_SESSION['admin'] = $usuario->rol_id ?? null;
                             header('Location: /admin');
-                        } elseif ($usuario->rol_id === '2') {
-                            // Terapeuta
-                            header('Location: /terapeuta/dashboard');
+                        } elseif ($usuario->rol_id == 2) { // Terapeuta
+                            // Verificar si existe como colaborador
+                            $colaborador = Colaborador::where('usuario_id', $usuario->id);
+                            error_log("Resultado búsqueda colaborador: " . json_encode($colaborador));
+                            if ($colaborador) {
+                                $_SESSION['colaborador_id'] = $colaborador->id;
+                                header('Location: /terapeuta/index');
+                            } else {
+                                // Si es terapeuta pero no está registrado como colaborador
+                                error_log("Usuario es terapeuta pero no está registrado como colaborador");
+                                Usuario::setAlerta('error', 'No estás registrado como terapeuta');
+                                header('Location: /');
+                            }
                         } else {
                             // Cliente
+                            error_log("Redirigiendo a panel de cliente");
                             header('Location: /cita');
                         }
+                        exit;
                     }
 
                 } else {

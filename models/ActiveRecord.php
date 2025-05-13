@@ -169,9 +169,9 @@ class ActiveRecord {
 
         // Resultado de la consulta
         return [
-        'resultado' =>  $resultado,
-        'id' => self::$db->insert_id,
-        'query' => $query
+            'resultado' =>  $resultado ? true : false,
+            'id' => self::$db->insert_id,
+            'query' => $query
         ];
 
     }

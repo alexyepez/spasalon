@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (data.resultado) {
             cerrarModalFamiliar(); // Cierra el modal
             await cargarFamiliares(clienteId); // Espera a que se recargue la lista
-            console.log(document.querySelector('#alerta-familiares'));
+            //console.log(document.querySelector('#alerta-familiares'));
             mostrarAlerta(mensaje, 'exito', '#alerta-familiares'); // Muestra la alerta en el contenedor principal
             
         } else if (data.mensaje) {

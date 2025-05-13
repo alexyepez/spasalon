@@ -11,6 +11,7 @@ const cita = {
 };
 
 document.addEventListener('DOMContentLoaded', function() {
+    const clienteId = window.clienteId;
     iniciarApp();
 });
 
@@ -25,6 +26,7 @@ function iniciarApp() {
     seleccionarFecha(); // Adiciona la fecha de la cita al objeto cita
     seleccionarHora(); // Adiciona la hora de la cita al objeto cita
     mostrarResumen(); // Muestra el resumen de la cita
+    reservarCita(); // Reserva la cita
 }
 
 function mostrarSeccion() {
@@ -203,29 +205,6 @@ function seleccionarHora() {
     });
 }
 
-function mostrarAlerta(mensaje, tipo, elemento, desaparece = true) {
-    // Elimina la alerta anterior si existe
-    const alertaPrevia = document.querySelector('.alerta'); // Selecciona la alerta anterior
-    if (alertaPrevia) {
-        alertaPrevia.remove(); // Si existe, la elimina
-        // alertaPrevia.remove(); // Elimina la alerta anterior si existe (otra forma de hacerlo)
-    }
-
-    // Scripting para crear la alerta
-    const alerta = document.createElement('DIV'); // Crea un nuevo elemento div
-    alerta.textContent = mensaje; // Asigna el mensaje al contenido del div creado
-    alerta.classList.add('alerta'); // Agrega la clase 'alerta' al div creado
-    alerta.classList.add(tipo); // Agrega la clase 'error' al div creado
-    const referencia = document.querySelector(elemento); // Selecciona el elemento de referencia
-    referencia.appendChild(alerta);
-
-    // Desaparece la alerta después de 3 segundos
-    if (desaparece) {
-        setTimeout(() => {
-            alerta.remove(); // Elimina la alerta después de 3 segundos
-        }, 3000);
-    }
-}
 
 function mostrarResumen() {
     const resumen = document.querySelector('.contenido-resumen'); // Selecciona el contenedor del resumen
@@ -305,6 +284,8 @@ function mostrarResumen() {
     resumen.appendChild(botonReservar); // Agrega el botón de reservar al contenedor del resumen
 }
 
+/*
+SE CAMBIA FUNCIÓN reservarCita() POR LA NUEVA FUNCIÓN reservarCita()
 async function reservarCita() {
     
     const { nombre, fecha, hora, servicios } = cita; // Desestructura el objeto cita para obtener los valores
@@ -330,5 +311,77 @@ async function reservarCita() {
     }); 
 
     const resultado = await respuesta.json(); // Convierte la respuesta a JSON  
-    console.log(resultado);
+    //console.log(resultado);
+}
+*/
+
+// Función nueva para reservar la cita
+async function reservarCita(e) {
+    e.preventDefault();
+
+    const { servicios, fecha, hora } = cita;
+    const selectPersona = document.querySelector('#persona');
+    const personaId = selectPersona.value;
+    const esFamiliar = personaId !== window.clienteId;
+
+    if (servicios.length === 0 || !personaId || !fecha || !hora) {
+        mostrarAlerta('Por favor, completa todos los campos.', 'error', '.contenido-resumen');
+        return;
+    }
+
+    const datos = {
+        servicios: servicios.map(servicio => servicio.id),
+        clienteId: window.clienteId, // ID del cliente logueado (siempre)
+        familiarId: esFamiliar ? personaId : null, // null si es el cliente, ID del familiar si no
+        fecha,
+        hora
+    };
+
+    try {
+        const respuesta = await fetch('/api/citas', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(datos)
+        });
+        
+        const resultado = await respuesta.json();
+
+        if (resultado.resultado) {
+            mostrarAlerta('Cita reservada exitosamente.', 'exito', '.contenido-resumen');
+            setTimeout(() => {
+                window.location.href = '/cita';
+            }, 3000);
+        } else {
+            mostrarAlerta(resultado.mensaje || 'Error al reservar la cita', 'error', '.contenido-resumen');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        mostrarAlerta('Error de conexión al reservar la cita', 'error', '.contenido-resumen');
+    }
+}
+
+// Función para mostrar la alerta
+function mostrarAlerta(mensaje, tipo, elemento, desaparece = true) {
+    // Elimina la alerta anterior si existe
+    const alertaPrevia = document.querySelector('.alerta'); // Selecciona la alerta anterior
+    if (alertaPrevia) {
+        alertaPrevia.remove(); // Si existe, la elimina
+    }
+
+    // Scripting para crear la alerta
+    const alerta = document.createElement('DIV'); // Crea un nuevo elemento div
+    alerta.textContent = mensaje; // Asigna el mensaje al contenido del div creado
+    alerta.classList.add('alerta'); // Agrega la clase 'alerta' al div creado
+    alerta.classList.add(tipo); // Agrega la clase 'error' al div creado
+    const referencia = document.querySelector(elemento); // Selecciona el elemento de referencia
+    referencia.appendChild(alerta);
+
+    // Desaparece la alerta después de 3 segundos
+    if (desaparece) {
+        setTimeout(() => {
+            alerta.remove(); // Elimina la alerta después de 3 segundos
+        }, 3000);
+    }
 }

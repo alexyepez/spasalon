@@ -58,19 +58,6 @@
         </div>
 
         <form class="formulario">
-            <!-- 
-            <div class="campo">
-                <label for="nombre">Nombre</label>
-                <input 
-                type="text" 
-                id="nombre" 
-                name="nombre" 
-                placeholder="Tu nombre"
-                value=" <?php /* echo $nombre ?? '';*/ ?>"
-                disabled
-                />
-            </div>
-            -->
             <div class="campo">
                 <label for="persona">¿Para quién es la cita?</label>
                 <select id="persona" name="persona">
