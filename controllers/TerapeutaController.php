@@ -1,4 +1,5 @@
 <?php
+
 namespace Controllers;
 
 use MVC\Router;
@@ -6,6 +7,7 @@ use Model\Colaborador;
 use Model\Cita;
 use Model\HistorialTratamiento;
 use Model\Usuario;
+
 
 class TerapeutaController {
     public static function index(Router $router) {
@@ -60,6 +62,7 @@ class TerapeutaController {
         $router->render('terapeutas/index', [
             'colaborador' => $colaborador,
             'citas' => $citas,
+            'historial' => $historial,
             'alertas' => $alertas,
             'exito' => isset($_GET['exito']) && $_GET['exito'] === 'tratamiento_registrado'
         ]);

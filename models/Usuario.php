@@ -70,6 +70,13 @@ class Usuario extends ActiveRecord {
         return self::$alertas;
     }
 
+    // Encontrar un Usuario
+    public static function find($id) {
+        $query = "SELECT * FROM " . static::$tabla  ." WHERE id = {$id} LIMIT 1";
+        $resultado = self::consultarSQL($query);
+        return array_shift( $resultado ) ;
+    }
+
     // Validar el password
     public function validarPassword() {
         if (!$this->password) {

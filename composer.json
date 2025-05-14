@@ -2,14 +2,16 @@
     "name": "future-projects/spa-salon",
     "description": "Proyecto Laboratorio de Software",
     "type": "project",
+
     "autoload": {
         "psr-4": {
-            "MVC\\" : "./",
-            "Controllers\\" : "./controllers",
-            "Model\\" : "./models",
-            "Classes\\" : "./classes"
+            "MVC\\": "./",
+            "Model\\": "./models/",
+            "Controllers\\": "./controllers/",
+            "Classes\\": "./classes/"
         }
     },
+
     "authors": [
         {
             "name": "Future Projects"

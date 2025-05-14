@@ -1,6 +1,9 @@
+@use 'base/variables' as v;
+
 .seccion {
     padding: 4rem 0;
     display: none;
+    //background-color: v.$blanco;
 
     .text-center {
         text-align: center;

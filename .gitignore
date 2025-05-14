@@ -1,0 +1,27 @@
+# Logs
+/config/logs/
+
+# Dependencias de Composer
+/vendor/
+
+# Archivos de entorno
+.env
+
+# Archivos temporales del sistema
+*.log
+*.tmp
+*.bak
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Archivos del IDE
+.idea/
+*.iml
+*.sublime-project
+*.sublime-workspace
+.vscode/
+
+# Node modules (si usas Node para assets)
+/node_modules/

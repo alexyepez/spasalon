@@ -47,7 +47,23 @@ class ComposerStaticInite636afa8c56c7b0ab2d28ff8b220690c
     );
 
     public static $classMap = array (
+        'Classes\\Email' => __DIR__ . '/../..' . '/classes/Email.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+        'Controllers\\APIController' => __DIR__ . '/../..' . '/controllers/APIController.php',
+        'Controllers\\CitaController' => __DIR__ . '/../..' . '/controllers/CitaController.php',
+        'Controllers\\LoginController' => __DIR__ . '/../..' . '/controllers/LoginController.php',
+        'Controllers\\TerapeutaController' => __DIR__ . '/../..' . '/controllers/TerapeutaController.php',
+        'MVC\\Router' => __DIR__ . '/../..' . '/Router.php',
+        'Model\\ActiveRecord' => __DIR__ . '/../..' . '/models/ActiveRecord.php',
+        'Model\\Cita' => __DIR__ . '/../..' . '/models/Cita.php',
+        'Model\\CitaServicio' => __DIR__ . '/../..' . '/models/CitaServicio.php',
+        'Model\\Cliente' => __DIR__ . '/../..' . '/models/Cliente.php',
+        'Model\\Colaborador' => __DIR__ . '/../..' . '/models/Colaborador.php',
+        'Model\\Familiar' => __DIR__ . '/../..' . '/models/Familiar.php',
+        'Model\\HistorialTratamiento' => __DIR__ . '/../..' . '/models/HistorialTratamiento.php',
+        'Model\\Recordatorio' => __DIR__ . '/../..' . '/models/Recordatorio.php',
+        'Model\\Servicio' => __DIR__ . '/../..' . '/models/Servicio.php',
+        'Model\\Usuario' => __DIR__ . '/../..' . '/models/Usuario.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

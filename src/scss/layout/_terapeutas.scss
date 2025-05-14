@@ -1,61 +1,156 @@
-// Estilos para el iindex del terapeuta
 @use 'base/variables' as v;
 @use 'base/mixins' as m;
+@use 'sass:color';
 
-.lista-citas {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+#app {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: calc(v.$separacion / 2);
+}
+
+.info-personal {
+    background-color: v.$blanco;
+    padding: calc(v.$separacion / 4);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: calc(v.$separacion / 2);
+
+    .campo {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid v.$gris-claro;
+
+        &:last-child {
+            border-bottom: none;
+        }
+
+        label {
+            font-weight: bold;
+            color: v.$naranja;
+            flex: 0 0 30%;
+        }
+
+        span {
+            flex: 0 0 65%;
+            color: v.$negro;
+        }
+    }
+}
+
+.listado-citas {
+    display: flex;
+    flex-direction: column;
+    gap: calc(v.$separacion / 4);
 }
 
 .cita {
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    background-color: #f9f9f9;
-}
-
-.cita p {
-    margin: 0.5rem 0;
-}
-
-.cita .boton {
-    margin-top: 1rem;
-    display: inline-block;
-}
-
-.modal-familiar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0,0,0,0.5);
+    background-color: v.$blanco;
+    padding: calc(v.$separacion / 4);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    justify-content: center;
-    z-index: 1000;
+    gap: calc(v.$separacion / 2);
+}
 
-    .modal-contenido {
-        background-color: white;
-        padding: 2rem;
-        border-radius: 0.5rem;
-        width: 90%;
-        max-width: 500px;
+.cita-info {
+    flex: 1;
 
-        .flex-between {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 1.5rem;
+    h3 {
+        margin: 0 0 0.5rem 0;
+        color: v.$naranja;
+        font-size: 1.8rem;
+    }
+
+    .estado {
+        display: inline-block;
+        padding: 0.3rem 1rem;
+        border-radius: 15px;
+        font-size: 0.9rem;
+        font-weight: bold;
+        text-transform: uppercase;
+
+        &.pendiente {
+            background-color: v.$amarillo;
+            color: v.$negro;
         }
 
-        textarea {
-            width: 100%;
-            min-height: 100px;
-            padding: 0.8rem;
-            border-radius: 0.5rem;
-            border: 1px solid #ddd;
+        &.confirmada {
+            background-color: v.$verde;
+            color: v.$blanco;
         }
+
+        &.cancelada {
+            background-color: v.$rojo;
+            color: v.$blanco;
+        }
+    }
+
+    .campo {
+        display: flex;
+        gap: 1rem;
+        margin: 0.5rem 0;
+
+        label {
+            font-weight: bold;
+            color: v.$naranja;
+            flex: 0 0 100px;
+        }
+
+        span {
+            color: v.$negro;
+            flex: 1;
+        }
+    }
+}
+
+.cita-acciones {
+    color: v.$negro;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+
+    .boton {
+        background-color: v.$azul;
+        color: v.$blanco;
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+
+        &:hover {
+            background-color: color.mix(v.$negro, v.$gris, 10%);
+        }
+    }
+
+    .boton-secundario {
+        background-color: v.$naranja;
+        color: v.$blanco;
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+
+        &:hover {
+            background-color: color.mix(v.$negro, v.$naranja, 10%);
+        }
+    }
+}
+
+.listado-historico {
+    background-color: v.$blanco;
+    padding: calc(v.$separacion / 4);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+
+    p {
+        color: v.$negro;
+        font-size: 2rem;
     }
 }

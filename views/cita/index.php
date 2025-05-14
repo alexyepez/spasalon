@@ -4,7 +4,7 @@
 
 <div id="app">
     <nav class="tabs">
-        <button class="actual" type"button" data-paso="1">Servicios</button>
+        <button class="actual" type="button" data-paso="1">Servicios</button>
         <button type="button" data-paso="2">Datos y cita</button>
         <button type="button" data-paso="3">Resumen</button>
     </nav>
@@ -69,7 +69,7 @@
                     <?php endforeach; ?>
                 </select>
             </div>
-            
+
             <div class="campo">
                 <label for="fecha">Fecha de la cita</label>
                 <input type="date" id="fecha" name="fecha"
@@ -79,7 +79,7 @@
 
             <div class="campo">
                 <label for="hora">Hora de la cita</label>
-                <input id="hora" 
+                <input id="hora"
                 type="time" name="hora"
                 />
             </div>

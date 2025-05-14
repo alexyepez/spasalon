@@ -1,4 +1,5 @@
 <?php
+
 namespace Model;
 
 class Cliente extends ActiveRecord {
@@ -15,5 +16,10 @@ class Cliente extends ActiveRecord {
         $this->usuario_id = $args['usuario_id'] ?? null;
         $this->telefono = $args['telefono'] ?? '';
         $this->direccion = $args['direccion'] ?? null;
+    }
+
+    // Obtener un usuario
+    public function getUsuario() {
+        return Usuario::find($this->usuario_id);
     }
 }

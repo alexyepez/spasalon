@@ -284,37 +284,6 @@ function mostrarResumen() {
     resumen.appendChild(botonReservar); // Agrega el botón de reservar al contenedor del resumen
 }
 
-/*
-SE CAMBIA FUNCIÓN reservarCita() POR LA NUEVA FUNCIÓN reservarCita()
-async function reservarCita() {
-    
-    const { nombre, fecha, hora, servicios } = cita; // Desestructura el objeto cita para obtener los valores
-    
-    const idServicios = servicios.map(servicio => servicio.id); // Mapea los servicios seleccionados para obtener sus IDs
-
-    const datos = new FormData();
-    datos.append('nombre', nombre);
-    datos.append('fecha', fecha); // Agrega la fecha al objeto FormData
-    datos.append('hora', hora); // Agrega la hora al objeto FormData
-    datos.append('servicios', idServicios); // Agrega los IDs de los servicios al objeto FormData
-    
-    //console.log([...datos]); // Muestra los datos en la consola
-    //datos.append('servicios', JSON.stringify(servicios)); // Agrega los servicios al objeto FormData
-    //return;
-
-    // Petición hacia la API
-    const url = 'http://localhost:3000/api/citas' // URL de la API
-    
-    const respuesta = await fetch(url, {
-        method: 'POST',
-        body: datos
-    }); 
-
-    const resultado = await respuesta.json(); // Convierte la respuesta a JSON  
-    //console.log(resultado);
-}
-*/
-
 // Función nueva para reservar la cita
 async function reservarCita(e) {
     e.preventDefault();
