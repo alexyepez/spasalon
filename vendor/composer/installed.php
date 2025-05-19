@@ -3,7 +3,7 @@
         'name' => 'future-projects/spa-salon',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '21dd0515e36523e8007327c30f922321df04d1a9',
+        'reference' => 'e71b27c695b742dd283c5e60a98564d5a017f930',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'future-projects/spa-salon' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '21dd0515e36523e8007327c30f922321df04d1a9',
+            'reference' => 'e71b27c695b742dd283c5e60a98564d5a017f930',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

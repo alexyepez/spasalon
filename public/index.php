@@ -1,6 +1,8 @@
 <?php 
 
 require_once __DIR__ . '/../includes/app.php';
+require_once __DIR__ . '/../vendor/autoload.php';
+//require_once __DIR__ . '/../config/error_log.php';
 
 use Controllers\APIController;
 use Controllers\CitaController;
@@ -12,9 +14,11 @@ $router = new Router();
 // Iniciar Sesión
 $router->get('/', function($router) {
     $router->render('landing', [
-        'claseImagen' => 'imagen-landing'
+        'claseImagen' => 'imagen-landing', // Específico para el landing
+        'landing' => true // Indicador de que esta es la página de landing
     ]);
 });
+
 
 // $router->get('/', [LoginController::class, 'login']);
 $router->post('/', [LoginController::class, 'login']);

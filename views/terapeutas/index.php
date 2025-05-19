@@ -5,9 +5,7 @@ use Model\Cliente;
 use Model\CitaServicio;
 use Model\Servicio;
 
-
 ?>
-
 
 <h1 class="nombre-pagina">Panel del Terapeuta</h1>
 <h2 class="subtitulo">Bienvenido(a), <?php echo htmlspecialchars($colaborador->getUsuario()->nombre . ' ' . $colaborador->getUsuario()->apellido); ?></h2>

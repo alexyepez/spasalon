@@ -4,17 +4,32 @@ namespace Controllers;
 
 use Model\Usuario;
 use Model\Cliente;
-use MVC\Router;
 use Classes\Email;
 use Model\Colaborador;
+use MVC\Router;
 
 class LoginController {
     public static function login(Router $router) {
         $alertas = [];
+        $auth = new Usuario;
+
+        // Verificar si hay un parámetro de éxito en la URL
+        $exito = false;
+        $mensaje_exito = '';
+
+        if (isset($_GET['exito'])) {
+            $exito = true;
+            if ($_GET['exito'] === 'password') {
+                $mensaje_exito = 'Contraseña actualizada correctamente';
+            } else if ($_GET['exito'] === 'registro') {
+                $mensaje_exito = '¡Registro exitoso! Por favor, inicia sesión.';
+            }
+        }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $auth = new Usuario($_POST);
-            $alertas = $auth->validarLogin();
+            $alertas = $auth->validarLogin(); // Se inicializa $auth por defecto
+            $exito = false; // Se inicializa $exito para evitar errores
 
             if (empty($alertas)) {
                 // Comprobar si el usuario existe
@@ -68,7 +83,9 @@ class LoginController {
         $alertas = Usuario::getAlertas();
         $router->render('auth/login', [
             'alertas' => $alertas,
-            'auth' => $auth
+            'auth' => $auth,
+            'exito' => $exito,
+            'mensaje_exito' => $mensaje_exito
         ]);
     }
 
@@ -91,9 +108,7 @@ class LoginController {
                     // Generar un nuevo token
                     $usuario->crearToken();
                     $usuario->guardar(); // Guardar el nuevo token
-                    //Usuario::setAlerta('exito', 'Hemos enviado las instrucciones a tu email');
-                    
-                    
+
                     // Enviar el email de recuperación
                     $email = new Email($usuario->email, $usuario->nombre, $usuario->token);
                     $email->enviarInstrucciones();
@@ -126,24 +141,29 @@ class LoginController {
         if(empty($usuario)) {
             Usuario::setAlerta('error', 'Token no válido o no existe');
             $error = true;
-        } else {
-            // Si el usuario existe, se valida la nueva contraseña
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                // Leer el nuevo password y guardarlo
-                $password = new Usuario($_POST);
-                $alertas = $password->validarPassword();
+        }
 
-                if (empty($alertas)) {
-                    // Hashear la nueva contraseña
-                    $usuario->password = $password->password;
-                    $usuario->hashPassword();
-                    $usuario->token = null; // Limpiar el token
-                    $resultado = $usuario->guardar(); // Guardar el nuevo password
+        // Si el usuario existe, se valida la nueva contraseña
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Leer el nuevo password y guardarlo
+            $password = new Usuario($_POST);
+            $alertas = $password->validarPassword();
 
-                    if ($resultado) {
-                        Usuario::setAlerta('exito', 'Contraseña actualizada correctamente');
-                        header('Location: /');
-                    }
+            if (empty($alertas)) {
+                $usuario->password = null;
+
+                // Hashear la nueva contraseña
+                $usuario->password = $password->password;
+                $usuario->hashPassword();
+                $usuario->token = null; // Limpiar el token
+                $resultado = $usuario->guardar(); // Guardar el nuevo password
+
+                if ($resultado) {
+                    //Usuario::setAlerta('exito', 'Contraseña actualizada correctamente');
+                    //header('Location: /login');
+                    // Redirigir al login con un parámetro de éxito
+                    header('Location: /login?exito=password');
+
                 }
             }
         }
@@ -159,6 +179,7 @@ class LoginController {
         $usuario = new Usuario;
         $alertas = [];
 
+        // Aquí puedes validar y registrar
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $usuario->sincronizar($_POST);
             $alertas = $usuario->validarNuevaCuenta();
@@ -210,12 +231,6 @@ class LoginController {
         $alertas = [];
         $token = trim(s($_GET['token']));
         $usuario = Usuario::where('token', $token);
-
-        /*
-        if (is_array($usuario) && !empty($usuario)) {
-            $usuario = $usuario[0];
-        }
-        */
 
         if (empty($usuario)) {
             Usuario::setAlerta('error', 'Token no válido o no existe');

@@ -1,0 +1,308 @@
+
+@use 'base/variables' as v;
+@use 'base/mixins' as m;
+@use 'sass:color';
+
+/* Sobreescribe el grid de contenedor-app para landing */
+.contenedor-app {
+  @include m.tablet {
+    display: block !important; /* Sobreescribe el grid para usar ancho completo */
+    min-height: auto !important;
+  }
+
+  .imagen-landing {
+    height: 100vh !important; /* Altura completa de la pantalla */
+    width: 100% !important;
+    position: fixed; /* Fijamos la imagen de fondo */
+    top: 0;
+    left: 0;
+    z-index: -1; /* Detrás del contenido */
+  }
+
+  .app {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+}
+
+/* Estilos de la sección de inicio */
+.inicio {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-image {
+  /* No necesitamos background-image aquí porque ya está en .imagen-landing */
+  width: 100%;
+  height: 100%;
+}
+
+.hero-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: white;
+  z-index: 10;
+  width: 90%;
+  max-width: 800px;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+
+  h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    color: white;
+  }
+
+  p {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+    color: white;
+  }
+
+  .hero-buttons {
+    margin-top: 2rem;
+
+    .btn {
+      padding: 0.8rem 2rem;
+      font-size: 1.2rem;
+      margin: 0.5rem;
+      border-radius: 50px;
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      }
+    }
+
+    .btn-primary {
+      background-color: v.$naranja;
+      border-color: v.$naranja;
+      color: white;
+    }
+
+    .btn-outline-light {
+      border: 2px solid white;
+      color: white;
+
+      &:hover {
+        background-color: white;
+        color: v.$naranja;
+      }
+    }
+  }
+}
+
+/* Sección Nosotros */
+.about {
+  background-color: white;
+  padding: 7rem 0;
+
+  .about-text {
+    h2 {
+      color: v.$negro;
+      font-size: 2.8rem;
+      margin-bottom: 2rem;
+
+      span {
+        color: v.$naranja;
+      }
+    }
+
+    p {
+      color: v.$negro;
+      font-size: 1.2rem;
+      line-height: 1.8;
+    }
+
+    .about-features {
+      margin-top: 2rem;
+
+      li {
+        color: v.$negro;
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+
+        i {
+          color: v.$naranja;
+        }
+      }
+    }
+  }
+}
+
+/* Sección Servicios */
+.services {
+  background-color: #f8f9fa;
+  padding: 7rem 0;
+
+  .section-header {
+    h2 {
+      color: v.$negro;
+      font-size: 2.8rem;
+    }
+
+    p {
+      color: v.$gris_oscuro;
+      font-size: 1.2rem;
+    }
+  }
+
+  .service-card {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+    height: 100%;
+
+    &:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    }
+
+    img {
+      border-radius: 5px;
+      height: 200px;
+      object-fit: cover;
+      width: 100%;
+    }
+
+    h3 {
+      color: v.$negro;
+      font-size: 1.8rem;
+    }
+
+    p {
+      color: v.$gris_oscuro;
+      font-size: 1rem;
+    }
+  }
+}
+
+/* Sección Contacto */
+.contact {
+  background-color: white;
+  padding: 7rem 0;
+
+  .section-header {
+    h2 {
+      color: v.$negro;
+      font-size: 2.8rem;
+    }
+
+    p {
+      color: v.$gris_oscuro;
+      font-size: 1.2rem;
+    }
+  }
+
+  .contact-form {
+    .form-control {
+      padding: 0.8rem 1.2rem;
+      border-radius: 5px;
+      margin-bottom: 1.5rem;
+      border: 1px solid #ced4da;
+    }
+
+    .btn-primary {
+      background-color: v.$naranja;
+      border-color: v.$naranja;
+      padding: 0.8rem 2rem;
+      border-radius: 50px;
+
+      &:hover {
+        background-color: color.mix(v.$negro, v.$naranja, 10%);
+      }
+    }
+  }
+
+  .contact-info {
+    background-color: #f8f9fa;
+    padding: 2rem;
+    border-radius: 10px;
+
+    h3 {
+      color: v.$negro;
+      font-size: 1.8rem;
+      margin-bottom: 1.5rem;
+    }
+
+    p {
+      color: v.$negro;
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+
+      i {
+        color: v.$naranja;
+        width: 25px;
+      }
+    }
+  }
+}
+
+/* Footer */
+.footer {
+  background-color: v.$negro;
+  padding: 3rem 0;
+
+  p {
+    color: white;
+    font-size: 1rem;
+    margin: 0;
+  }
+}
+
+/* Definición de clase para secciones con padding */
+.section-padding {
+  padding: 7rem 0;
+}
+
+/* Soporte responsive */
+@include m.tablet {
+  .hero-text {
+    h1 {
+      font-size: 2.8rem;
+    }
+
+    p {
+      font-size: 1.3rem;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .section-padding {
+    padding: 4rem 0;
+  }
+
+  .hero-text {
+    h1 {
+      font-size: 2.2rem;
+    }
+
+    p {
+      font-size: 1.1rem;
+    }
+  }
+
+  .about-img {
+    margin-bottom: 2rem;
+  }
+
+  .about-text {
+    text-align: center;
+  }
+
+  .contact-info {
+    margin-top: 3rem;
+  }
+}

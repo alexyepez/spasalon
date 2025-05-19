@@ -61,10 +61,18 @@
     </div>
 
     <input type="submit" class="boton" value="Crear Cuenta" />
+    <?php if (!empty($errores)): ?>
+        <div class="alerta error">
+            <?php foreach ($errores as $error): ?>
+                <p><?php echo htmlspecialchars($error); ?></p>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+
 
 </form>
 
 <div class="acciones">
-    <a href="/">¿Ya tienes cuenta? Inicia Sesión</a>
+    <a href="/login">¿Ya tienes cuenta? Inicia Sesión</a>
     <a href="/olvide">¿Olvidaste tu contraseña?</a>
 </div>

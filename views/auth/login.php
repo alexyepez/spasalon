@@ -9,9 +9,14 @@ $claseImagen = $claseImagen ?? 'imagen';
     include_once __DIR__ . '/../templates/alertas.php';
 ?>
 
-<?php if ($exito): ?>
-    <div class="alerta exito">¡Registro exitoso! Por favor, inicia sesión.</div>
+<?php if (isset($exito) && $exito): ?>
+    <!-- <div class="alerta exito">¡Registro exitoso! Por favor, inicia sesión.</div> -->
+    <div class="alerta exito">
+        <?php echo $mensaje_exito; ?>
+    </div>
+
 <?php endif; ?>
+
 
 <form class="formulario" method="POST" action="/">
     <div class="campo">
@@ -41,3 +46,19 @@ $claseImagen = $claseImagen ?? 'imagen';
     <a href="/crear-cuenta">¿Aún no tienes cuenta? Regístrate</a>
     <a href="/olvide">¿Olvidaste tu contraseña?</a>
 </div>
+
+<?php
+$script = "
+<script>
+    // Hacer que las alertas desaparezcan después de 3 segundos
+    document.addEventListener('DOMContentLoaded', function() {
+        const alertas = document.querySelectorAll('.alerta');
+        alertas.forEach(alerta => {
+            setTimeout(() => {
+                alerta.remove();
+            }, 3000);
+        });
+    });
+</script>
+";
+?>

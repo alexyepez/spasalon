@@ -6,21 +6,5 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
-    'Classes\\Email' => $baseDir . '/classes/Email.php',
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
-    'Controllers\\APIController' => $baseDir . '/controllers/APIController.php',
-    'Controllers\\CitaController' => $baseDir . '/controllers/CitaController.php',
-    'Controllers\\LoginController' => $baseDir . '/controllers/LoginController.php',
-    'Controllers\\TerapeutaController' => $baseDir . '/controllers/TerapeutaController.php',
-    'MVC\\Router' => $baseDir . '/Router.php',
-    'Model\\ActiveRecord' => $baseDir . '/models/ActiveRecord.php',
-    'Model\\Cita' => $baseDir . '/models/Cita.php',
-    'Model\\CitaServicio' => $baseDir . '/models/CitaServicio.php',
-    'Model\\Cliente' => $baseDir . '/models/Cliente.php',
-    'Model\\Colaborador' => $baseDir . '/models/Colaborador.php',
-    'Model\\Familiar' => $baseDir . '/models/Familiar.php',
-    'Model\\HistorialTratamiento' => $baseDir . '/models/HistorialTratamiento.php',
-    'Model\\Recordatorio' => $baseDir . '/models/Recordatorio.php',
-    'Model\\Servicio' => $baseDir . '/models/Servicio.php',
-    'Model\\Usuario' => $baseDir . '/models/Usuario.php',
 );
