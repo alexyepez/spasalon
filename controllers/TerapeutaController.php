@@ -5,6 +5,8 @@ namespace Controllers;
 use MVC\Router;
 use Model\Colaborador;
 use Model\Cita;
+use Model\Cliente;
+use Model\Familiar;
 use Model\HistorialTratamiento;
 use Model\Usuario;
 
@@ -14,7 +16,7 @@ class TerapeutaController {
         session_start();
 
         // Verificar autenticación
-        if (!esTerapeuta()) {
+        if (!esTerapeuta() || isAuth() === false) {
             header('Location: /cita');
             return;
         }
@@ -31,6 +33,17 @@ class TerapeutaController {
 
         // Obtener citas asignadas al terapeuta
         $citas = Cita::whereAll('colaborador_id', $colaborador->id);
+
+        // Procesar citas para incluir información completa
+        foreach ($citas as &$cita) {
+            $cita->cliente = Cliente::find($cita->cliente_id);
+
+            // Si es para un familiar, obtener información del familiar
+            if ($cita->familiar_id) {
+                $cita->familiar = Familiar::find($cita->familiar_id);
+            }
+        }
+        unset($cita); // Importante para liberar la referencia
 
         // Procesar formulario para registrar tratamiento
         $alertas = [];

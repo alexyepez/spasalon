@@ -1,5 +1,10 @@
 <h1 class="nombre-pagina">Crear nueva cita</h1>
-<h2 class="subtitulo">Bienvenido a tu panel de citas</h2>
+<!--<h2 class="subtitulo">Bienvenido a tu panel de citas</h2>-->
+<div class="barra">
+    <h2 class="subtitulo">Bienvenido(a), <?php echo $nombre ?? ''; ?></h2>
+
+    <a class="boton" href="/logout">Cerrar Sesión</a>
+</div>
 <p class="descripcion-pagina">Elige tus servicios e ingresa tus datos</p>
 
 <div id="app">
@@ -61,7 +66,7 @@
             <div class="campo">
                 <label for="persona">¿Para quién es la cita?</label>
                 <select id="persona" name="persona">
-                    <option value=" <?php echo htmlspecialchars($cliente->id); ?>"><?php echo htmlspecialchars($nombre); ?> (Tú)</option>
+                    <option value="<?php echo htmlspecialchars($cliente->id); ?>"><?php echo htmlspecialchars($nombre); ?> (Tú)</option>
                     <?php foreach ($familiares as $familiar): ?>
                         <option value="<?php echo htmlspecialchars($familiar->id); ?>">
                             <?php echo htmlspecialchars($familiar->nombre . ' ' . $familiar->apellido); ?> (<?php echo htmlspecialchars($familiar->parentesco); ?>)
@@ -107,6 +112,7 @@
 
 <?php
     $script = "
+    <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
     <script src='build/js/app.js'></script>
     <script src='build/js/familiares.js'></script>
     ";

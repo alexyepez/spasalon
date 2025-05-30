@@ -43,3 +43,10 @@ function redireccionar(string $url) : void {
     header("Location: $url");
     exit;
 }
+
+// Función que revisa que el usuario está autenticado
+function isAuth() : void {
+    if (!isset($_SESSION['login'])) {
+        header('Location: /login');
+    }
+}

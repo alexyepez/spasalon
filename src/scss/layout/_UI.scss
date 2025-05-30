@@ -34,3 +34,28 @@
         padding: 3rem 0;
     }
 }
+
+.barra {
+    margin: 1rem;
+
+    @include m.tablet {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .boton {
+        @include m.boton(v.$pastel, v.$blanco);
+        margin: 1.5rem;
+        padding: 1rem;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+
+        &:hover {
+            background-color: darken(v.$pastel, 10%);
+        }
+    }
+
+}

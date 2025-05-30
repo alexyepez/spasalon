@@ -4,6 +4,7 @@ const pasoFinal = 3; // Paso final
 
 // Variables para almacenar los datos del formulario
 const cita = {
+    //id: '',
     nombre: '',
     fecha: '',
     hora: '',
@@ -22,6 +23,7 @@ function iniciarApp() {
     paginaSiguiente(); // Cambia la sección cuando se presiona el botón "Siguiente"
     paginaAnterior(); // Cambia la sección cuando se presiona el botón "Anterior"
     consultarAPI(); // Llama a la función para consultar la API en el backend de php
+    //idCliente();
     nombreCliente(); // Adiciona el nombre del cliente al objeto cita
     seleccionarFecha(); // Adiciona la fecha de la cita al objeto cita
     seleccionarHora(); // Adiciona la hora de la cita al objeto cita
@@ -162,9 +164,8 @@ function seleccionarServicio(servicio) {
 }
 
 /*
-function nombreCliente() {  
-    const nombre = document.querySelector('#cliente').value;
-    cita.nombre = nombre; // Asigna el valor del input al objeto cita
+function idCliente() {
+    cita.id = document.querySelector('#persona').value;
 }
 */
 
@@ -318,16 +319,38 @@ async function reservarCita(e) {
         const resultado = await respuesta.json();
 
         if (resultado.resultado) {
+            /*
             mostrarAlerta('Cita reservada exitosamente.', 'exito', '.contenido-resumen');
             setTimeout(() => {
                 window.location.href = '/cita';
+            }, 3000); */
+            Swal.fire({
+                title: "Cita Creada!",
+                icon: "success",
+                texto: "Tu cita fue creada exitosamente.",
+                button: "OK",
+            }).then(() => {
+                window.location.href = '/cita';
             }, 3000);
+
         } else {
-            mostrarAlerta(resultado.mensaje || 'Error al reservar la cita', 'error', '.contenido-resumen');
+            //mostrarAlerta(resultado.mensaje || 'Error al reservar la cita', 'error', '.contenido-resumen');
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "Error al reservar la cita!",
+                button: "OK",
+            });
         }
     } catch (error) {
         console.error('Error:', error);
-        mostrarAlerta('Error de conexión al reservar la cita', 'error', '.contenido-resumen');
+        Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Error de conexión al reservar la cita!",
+            button: "OK",
+        });
+        //mostrarAlerta('Error de conexión al reservar la cita', 'error', '.contenido-resumen');
     }
 }
 

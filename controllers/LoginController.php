@@ -42,8 +42,9 @@ class LoginController {
                         $_SESSION['id'] = $usuario->id;
                         $_SESSION['nombre'] = $usuario->nombre . " " . $usuario->apellido;
                         $_SESSION['email'] = $usuario->email;
-                        $_SESSION['login'] = true;
                         $_SESSION['rol_id'] = $usuario->rol_id;
+                        $_SESSION['login'] = true;
+
 
                         // Debug: Verificar valores antes de redirección
                         error_log("Usuario autenticado - ID: " . $usuario->id . ", Rol: " . $usuario->rol_id);
@@ -90,7 +91,12 @@ class LoginController {
     }
 
     public static function logout() {
-        echo "Desde Logout";
+        session_start();
+
+        $_SESSION=[];
+
+        header('Location: /login');
+
     }
 
     public static function olvide( Router $router) {

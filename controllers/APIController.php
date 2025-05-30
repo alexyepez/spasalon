@@ -8,21 +8,13 @@ use Model\Cita;
 use Model\Colaborador;
 use Model\Cliente;
 use \Model\CitaServicio;
+use \Model\CitaCancelacion;
 
 class APIController {
     public static function index() {
         $servicios = Servicio::all();
         echo json_encode($servicios);
     }
-
-    /*
-    public static function guardar() {
-    $respuesta = [
-        'datos' => $_POST
-    ];
-    echo json_encode($respuesta);
-    }
-    */
 
     // Obtener familiares de un cliente
     public static function familiares() {
@@ -226,5 +218,134 @@ class APIController {
 
         echo json_encode(['resultado' => true]);
     }
+
+    /*
+
+    public static function cambiarEstadoCita() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            echo json_encode(['resultado' => false, 'mensaje' => 'Método no permitido']);
+            return;
+        }
+
+        $cita_id = $_POST['cita_id'] ?? null;
+        $accion = $_POST['accion'] ?? '';
+
+        if (!$cita_id) {
+            echo json_encode(['resultado' => false, 'mensaje' => 'ID de cita no proporcionado']);
+            return;
+        }
+
+        // Buscar la cita
+        $cita = Cita::find($cita_id);
+        if (!$cita) {
+            echo json_encode(['resultado' => false, 'mensaje' => 'Cita no encontrada']);
+            return;
+        }
+
+        // Realizar la acción según lo solicitado
+        switch ($accion) {
+            case 'confirmar':
+                $cita->estado = 1; // Confirmada
+                break;
+            case 'cancelar':
+                $cita->estado = 2; // Cancelada
+                $motivo = $_POST['motivo'] ?? 'No especificado';
+
+                // Guardar el motivo de cancelación
+                $cancelacion = new CitaCancelacion([
+                    'cita_id' => $cita_id,
+                    'motivo' => $motivo,
+                    'fecha' => date('Y-m-d')
+                ]);
+                $cancelacion->guardar();
+                break;
+            default:
+                echo json_encode(['resultado' => false, 'mensaje' => 'Acción no válida']);
+                return;
+        }
+
+        // Guardar los cambios
+        $resultado = $cita->guardar();
+
+        if ($resultado) {
+            echo json_encode(['resultado' => true, 'mensaje' => 'Estado de cita actualizado correctamente']);
+        } else {
+            echo json_encode(['resultado' => false, 'mensaje' => 'Error al actualizar el estado de la cita']);
+        }
+    } */
+
+    public static function cambiarEstadoCita() {
+        // Establecer el tipo de contenido como JSON
+        header('Content-Type: application/json');
+
+        try {
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                echo json_encode(['resultado' => false, 'mensaje' => 'Método no permitido']);
+                return;
+            }
+
+            $cita_id = $_POST['cita_id'] ?? null;
+            $accion = $_POST['accion'] ?? '';
+
+            if (!$cita_id) {
+                echo json_encode(['resultado' => false, 'mensaje' => 'ID de cita no proporcionado']);
+                return;
+            }
+
+            // Buscar la cita
+            $cita = Cita::find($cita_id);
+            if (!$cita) {
+                echo json_encode(['resultado' => false, 'mensaje' => 'Cita no encontrada']);
+                return;
+            }
+
+            //error_log("Cita encontrada: " . print_r($cita, true));
+
+
+            // Realizar la acción según lo solicitado
+            switch ($accion) {
+                case 'confirmar':
+                    $cita->estado = 1; // Confirmada
+                    break;
+                case 'cancelar':
+                    $cita->estado = 2; // Cancelada
+                    $motivo = $_POST['motivo'] ?? 'No especificado';
+
+                    // Guardar el motivo de cancelación
+                    $cancelacion = new CitaCancelacion([
+                        'cita_id' => $cita_id,
+                        'motivo' => $motivo,
+                        'fecha' => date('Y-m-d')
+                    ]);
+
+                    // No necesitamos validar aquí si los datos ya están presentes
+                    $resultadoCancelacion = $cancelacion->guardar();
+                    //error_log("Resultado de guardar cancelación: " . print_r($resultadoCancelacion, true));
+
+                    break;
+                default:
+                    echo json_encode(['resultado' => false, 'mensaje' => 'Acción no válida']);
+                    return;
+            }
+
+            // Guardar los cambios en la cita
+            $resultado = $cita->guardar();
+            //error_log("Resultado de guardar cita: " . print_r($resultado, true));
+
+
+            if ($resultado) {
+                echo json_encode(['resultado' => true, 'mensaje' => 'Estado de cita actualizado correctamente']);
+            } else {
+                echo json_encode(['resultado' => false, 'mensaje' => 'Error al actualizar el estado de la cita']);
+            }
+
+        } catch (\Exception $e) {
+            // Capturar cualquier excepción y devolver un mensaje de error JSON
+            //error_log("Excepción en cambiarEstadoCita: " . $e->getMessage());
+            echo json_encode(['resultado' => false, 'mensaje' => 'Error en el servidor: ' . $e->getMessage()]);
+        }
+        exit; // Asegurarse de que no se envíe ningún otro contenido
+    }
+
 }
 

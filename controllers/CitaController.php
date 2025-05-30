@@ -5,12 +5,15 @@ namespace Controllers;
 use MVC\Router;
 use Model\Cliente;
 use Model\Familiar;
-use Model\Servicio;
 
 class CitaController {
 
     public static function index( Router $router ) {
         session_start();
+
+
+        // Llama a la función isAuth() para verificar si el usuario está autenticado.
+        isAuth();
 
         $usuario_id = $_SESSION['id'];
         $cliente = Cliente::where('usuario_id', $usuario_id);

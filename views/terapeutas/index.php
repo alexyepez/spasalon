@@ -1,14 +1,21 @@
+
 <?php
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 use Model\Cliente;
 use Model\CitaServicio;
 use Model\Servicio;
+use Model\Familiar;
 
 ?>
 
 <h1 class="nombre-pagina">Panel del Terapeuta</h1>
-<h2 class="subtitulo">Bienvenido(a), <?php echo htmlspecialchars($colaborador->getUsuario()->nombre . ' ' . $colaborador->getUsuario()->apellido); ?></h2>
+<div class="barra">
+    <h2 class="subtitulo">Bienvenido(a), <?php echo htmlspecialchars($colaborador->getUsuario()->nombre . ' ' . $colaborador->getUsuario()->apellido); ?></h2>
+
+    <a class="boton" href="/logout">Cerrar Sesión</a>
+</div>
+
 <p class="descripcion-pagina">Administra tus citas y registra los tratamientos</p>
 
 <div id="app">
@@ -47,15 +54,28 @@ use Model\Servicio;
                     <?php
                     $cliente = Cliente::find($cita->cliente_id);
                     $clienteNombre = 'Cliente desconocido';
-                    if ($cliente && $cliente->getUsuario()) {
-                        $clienteNombre = $cliente->getUsuario()->nombre . ' ' . $cliente->getUsuario()->apellido;
-                    } else if ($cliente) {
-                        // Si existe el cliente pero no el usuario asociado (caso raro, pero para evitar error)
-                        $clienteNombre = 'Cliente ID: ' . $cita->cliente_id . ' (sin datos de usuario)';
-                    } else {
-                        $clienteNombre = 'Cliente desconocido (ID: ' . $cita->cliente_id . ')';
-                    }
 
+                    // Verificar si la cita es para un familiar
+                    if ($cita->familiar_id) {
+                        // Buscar el familiar asociado a la cita
+                        $familiar = Familiar::find($cita->familiar_id);
+                        if ($familiar) {
+                            $clienteNombre = $familiar->nombre . ' ' . $familiar->apellido . ' (Familiar de ';
+                            if ($cliente && $cliente->getUsuario()) {
+                                $clienteNombre .= $cliente->getUsuario()->nombre . ' ' . $cliente->getUsuario()->apellido;
+                            }
+                            $clienteNombre .= ')';
+                        }
+                    } else {
+                        // La cita es para el cliente
+                        if ($cliente && $cliente->getUsuario()) {
+                            $clienteNombre = $cliente->getUsuario()->nombre . ' ' . $cliente->getUsuario()->apellido;
+                        } else if ($cliente) {
+                            $clienteNombre = 'Cliente ID: ' . $cita->cliente_id . ' (sin datos de usuario)';
+                        } else {
+                            $clienteNombre = 'Cliente desconocido (ID: ' . $cita->cliente_id . ')';
+                        }
+                    }
 
                     $servicios = CitaServicio::whereAll('cita_id', $cita->id) ?? [];
                     $servicioNombres = array_map(function($cs) {
@@ -63,24 +83,35 @@ use Model\Servicio;
                         return $servicio ? $servicio->nombre : 'Servicio desconocido';
                     }, $servicios);
 
-                    $estados = ['Pendiente', 'Confirmada', 'Cancelada']; // índice 1 sea "Confirmada"
-                    $estadoTexto = $estados[$cita->estado] ?? 'Desconocido'; // Usar ?? para default
-                    $estadoClase = strtolower(str_replace(' ', '-', $estadoTexto)); // ej: 'pendiente', 'confirmada'
+                    $estados = ['Pendiente', 'Confirmada', 'Cancelada'];
+                    $estadoTexto = $estados[$cita->estado] ?? 'Desconocido';
+                    $estadoClase = strtolower(str_replace(' ', '-', $estadoTexto));
                     ?>
 
                     <div class="cita">
                         <div class="cita-info">
                             <h3>Cita #<?php echo htmlspecialchars($cita->id); ?></h3>
                             <p class="estado <?php echo htmlspecialchars($estadoClase); ?>"><?php echo htmlspecialchars($estadoTexto); ?></p>
-
                             <div class="campo">
-                                <label>Cliente:</label>
-                                <span><?php echo htmlspecialchars($clienteNombre); ?></span>
+                                <label>Paciente:</label>
+                                <span>
+                                    <?php
+                                    if (isset($cita->familiar) && $cita->familiar) {
+                                        echo htmlspecialchars($cita->familiar->nombre . ' ' . $cita->familiar->apellido .
+                                            ' (Familiar de ' . $cita->cliente->getUsuario()->nombre . ')');
+                                    } elseif (isset($cita->cliente) && $cita->cliente) {
+                                        echo htmlspecialchars($cita->cliente->getUsuario()->nombre . ' ' .
+                                            $cita->cliente->getUsuario()->apellido);
+                                    } else {
+                                        echo 'Paciente desconocido';
+                                    }
+                                    ?>
+                                </span>
                             </div>
 
                             <div class="campo">
                                 <label>Hora:</label>
-                                <span><?php echo htmlspecialchars(date('h:i A', strtotime($cita->hora))); ?></span> <!-- Formatear hora -->
+                                <span><?php echo htmlspecialchars(date('h:i A', strtotime($cita->hora))); ?></span>
                             </div>
 
                             <div class="campo">
@@ -89,25 +120,55 @@ use Model\Servicio;
                             </div>
                         </div>
 
-                        <div class="cita-acciones"
-                            <button class="boton" data-id-cita="<?php echo htmlspecialchars($cita->id); ?>">
-                                Registrar Tratamiento
-                            </button>
-                            <button class="boton-secundario" data-id-cita="<?php echo htmlspecialchars($cita->id); ?>">
-                                Ver Detalles
-                            </button>
+                        <div class="cita-acciones">
+                            <!-- Mostrar acciones según el estado actual -->
+                            <?php if($cita->estado == 0): // Si está pendiente ?>
+                                <button class="boton registrar-tratamiento" data-id-cita="<?php echo htmlspecialchars($cita->id); ?>">
+                                    Registrar Tratamiento
+                                </button>
+                                <button class="boton-secundario ver-detalles" data-id-cita="<?php echo htmlspecialchars($cita->id); ?>">
+                                    Ver Detalles
+                                </button>
+                                <button class="boton-cancelar cancelar-cita" data-id-cita="<?php echo htmlspecialchars($cita->id); ?>">
+                                    Cancelar Cita
+                                </button>
+                            <?php elseif($cita->estado == 1): // Si está confirmada ?>
+                                <button class="boton-secundario ver-detalles" data-id-cita="<?php echo htmlspecialchars($cita->id); ?>">
+                                    Ver Detalles
+                                </button>
+                                <span class="badge confirmada">Confirmada ✓</span>
+                            <?php else: // Si está cancelada ?>
+                                <button class="boton-secundario ver-detalles" data-id-cita="<?php echo htmlspecialchars($cita->id); ?>">
+                                    Ver Detalles
+                                </button>
+                                <span class="badge cancelada">Cancelada ✗</span>
+                            <?php endif; ?>
                         </div>
                     </div>
                 <?php endforeach; ?>
             <?php endif; ?>
         </div>
+
+        <!-- Indicador de scrool hacia abajo -->
+        <div class="scroll-indicator scroll-down">
+            <span>Más citas abajo</span>
+            <div class="arrow-down"></div>
+        </div>
+
+        <!-- Indicador de scroll hacia arriba -->
+        <div class="scroll-indicator scroll-up">
+            <span>Más citas arriba</span>
+            <div class="arrow-up"></div>
+        </div>
+
+
     </div>
 
     <div id="paso-3" class="seccion">
         <h2>Historial de Tratamientos</h2>
         <p class="text-center">Registro histórico de tratamientos realizados</p>
         <div id="historial-tratamientos" class="listado-historico">
-            <!-- Se llenará dinámicamente con JavaScript si se implementas cargarHistorialTratamientos -->
+            <!-- Se llenará dinámicamente con JavaScript si se implementa cargarHistorialTratamientos -->
             <p>El historial se cargará aquí.</p>
         </div>
     </div>
@@ -119,7 +180,7 @@ use Model\Servicio;
 </div>
 
 <?php
-// Asegúrate que $colaborador->id exista y sea el correcto.
+// Se asegura que $colaborador->id exista y sea el correcto.
 $terapeutaIdScript = isset($colaborador) && property_exists($colaborador, 'id') ? htmlspecialchars($colaborador->id) : 'null';
 $script = "
 <script>

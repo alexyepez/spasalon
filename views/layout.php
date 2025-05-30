@@ -19,6 +19,9 @@ $claseImagen = $claseImagen ?? 'imagen';
         <!-- Google Fonts -->
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;700;900&display=swap" rel="stylesheet">
 
+        <!-- SweetAlert2 -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
         <!-- Estilos generales (solo para páginas que no son landing) -->
         <link rel="stylesheet" href="/build/css/app.css">
     <?php endif; ?>

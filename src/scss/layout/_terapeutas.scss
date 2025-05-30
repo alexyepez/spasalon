@@ -8,6 +8,123 @@
     padding: calc(v.$separacion / 2);
 }
 
+// Para el body o el contenedor principal que tiene la imagen de fondo
+body, .contenedor-principal {
+    background-size: 100% auto; // Esto mantiene el ancho al 100% pero la altura automática
+    background-repeat: repeat-y; // Repite la imagen verticalmente en lugar de estirarla
+    background-attachment: fixed; // Mantiene la imagen fija mientras haces scroll
+}
+
+#paso-2 {
+    position: relative; // Para posicionar el indicador correctamente
+    background-size: cover; // Mantiene la proporción de la imagen
+    background-position: center; // Centra la imagen
+    background-repeat: no-repeat; // Evita la repetición
+
+    .listado-citas {
+        max-height: 70vh;
+        overflow-y: auto;
+
+        &::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        &::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 4px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+        }
+    }
+}
+
+// Indicador de scroll - MOVIDO FUERA DEL SELECTOR #paso-2
+.scroll-indicator {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 8px 16px;
+    border-radius: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 10;
+    cursor: pointer;
+
+    span {
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: v.$naranja;
+        font-weight: bold;
+    }
+
+    &.scroll-down {
+        bottom: 20px;
+
+        .arrow-down {
+            width: 20px;
+            height: 20px;
+            border: solid v.$naranja;
+            border-width: 0 3px 3px 0;
+            display: inline-block;
+            padding: 3px;
+            transform: rotate(45deg);
+            animation: bounce-down 1.5s infinite;
+        }
+    }
+
+    &.scroll-up {
+        top: 120px; // Posicionado en la parte superior
+
+        .arrow-up {
+            width: 20px;
+            height: 20px;
+            border: solid v.$naranja;
+            border-width: 0 3px 3px 0;
+            display: inline-block;
+            padding: 3px;
+            transform: rotate(-135deg); // Flecha apuntando hacia arriba
+            animation: bounce-up 1.5s infinite;
+        }
+    }
+}
+
+// Animaciones - MOVIDO FUERA DEL SELECTOR #paso-2
+@keyframes bounce-down {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0) rotate(45deg);
+    }
+    40% {
+        transform: translateY(-10px) rotate(45deg);
+    }
+    60% {
+        transform: translateY(-5px) rotate(45deg);
+    }
+}
+
+@keyframes bounce-up {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0) rotate(-135deg);
+    }
+    40% {
+        transform: translateY(10px) rotate(-135deg);
+    }
+    60% {
+        transform: translateY(5px) rotate(-135deg);
+    }
+}
+
+// Ocultar los indicadores cuando no son necesarios
+.scroll-indicator.hide {
+    display: none;
+}
+
+
 .info-personal {
     background-color: v.$blanco;
     padding: calc(v.$separacion / 4);
@@ -111,10 +228,12 @@
     display: flex;
     gap: 1rem;
     flex-wrap: wrap;
-    justify-content: flex-end;
+    justify-content: center;
+    align-items: center;
+    align-content: stretch;
 
     .boton {
-        background-color: v.$azul;
+        background-color: v.$amarillo;
         color: v.$blanco;
         padding: 0.5rem 1rem;
         border: none;
@@ -123,7 +242,7 @@
         transition: background-color 0.3s ease;
 
         &:hover {
-            background-color: color.mix(v.$negro, v.$gris, 10%);
+            background-color: color.mix(v.$negro, v.$amarillo, 10%);
         }
     }
 
@@ -140,6 +259,40 @@
             background-color: color.mix(v.$negro, v.$naranja, 10%);
         }
     }
+
+    .boton-cancelar {
+        background-color: v.$rojo;
+        color: v.$blanco;
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+
+        &:hover {
+            background-color: color.mix(v.$negro, v.$rojo, 10%);
+        }
+    }
+
+
+    .badge {
+        display: inline-block;
+        padding: 0.3rem 1rem;
+        border-radius: 15px;
+        font-size: 0.9rem;
+        font-weight: bold;
+        text-transform: uppercase;
+
+        &.confirmada {
+            background-color: v.$verde;
+            color: v.$blanco;
+        }
+
+        &.cancelada {
+            background-color: v.$rojo;
+            color: v.$blanco;
+        }
+    }
 }
 
 .listado-historico {
@@ -154,3 +307,10 @@
         font-size: 2rem;
     }
 }
+
+#paso-2 {
+    background-size: cover; // Mantiene la proporción de la imagen
+    background-position: center; // Centra la imagen
+    background-repeat: no-repeat; // Evita la repetición
+}
+

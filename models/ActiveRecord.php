@@ -94,6 +94,7 @@ class ActiveRecord {
         }
     }
 
+    /* FUNCIÓN ORIGINAL GUARDAR
     // Registros - CRUD
     public function guardar() {
         $resultado = '';
@@ -105,6 +106,21 @@ class ActiveRecord {
             $resultado = $this->crear();
         }
         return $resultado;
+    }*/
+
+    public function guardar() {
+        try {
+            if (!$this->id) {
+                // Es un nuevo registro (insertar)
+                return $this->crear();
+            } else {
+                // Es un registro existente (actualizar)
+                return $this->actualizar();
+            }
+        } catch (\Exception $e) {
+            error_log("Error en método guardar(): " . $e->getMessage());
+            return false;
+        }
     }
 
     // Todos los registros
@@ -154,6 +170,7 @@ class ActiveRecord {
     }
 
     // crea un nuevo registro
+    /*
     public function crear() {
         // Sanitizar los datos
         $atributos = $this->sanitizarAtributos();
@@ -176,7 +193,44 @@ class ActiveRecord {
 
     }
 
+    */
+    public function crear() {
+        // Sanitizar los datos
+        $atributos = $this->sanitizarAtributos();
+
+        // Construir columnas y valores por separado
+        $columnas = join(', ', array_keys($atributos));
+
+        // Preparar valores, tratando NULL de forma especial
+        $valoresArray = [];
+        foreach ($atributos as $valor) {
+            // Si el valor es una cadena vacía o null, lo tratamos como NULL en SQL
+            if ($valor === '' || $valor === null) {
+                $valoresArray[] = "NULL";
+            } else {
+                $valoresArray[] = "'{$valor}'";
+            }
+        }
+
+        $valores = join(', ', $valoresArray);
+
+        // Crear consulta con manejo adecuado de NULL
+        $query = "INSERT INTO " . static::$tabla . " ($columnas) VALUES ($valores)";
+
+        // Ejecutar la consulta
+        $resultado = self::$db->query($query);
+
+        // Resultado de la consulta
+        return [
+            'resultado' => $resultado ? true : false,
+            'id' => self::$db->insert_id,
+            'query' => $query
+        ];
+    }
+
+
     // Actualizar el registro
+    /*FUNCIÓN ORIGINAL ACTUALIZAR
     public function actualizar() {
         // Sanitizar los datos
         $atributos = $this->sanitizarAtributos();
@@ -192,6 +246,35 @@ class ActiveRecord {
         $query .=  join(', ', $valores );
         $query .= " WHERE id = '" . self::$db->escape_string($this->id) . "' ";
         $query .= " LIMIT 1 "; 
+
+        // Actualizar BD
+        $resultado = self::$db->query($query);
+        return $resultado;
+    } */
+
+    public function actualizar() {
+        // Sanitizar los datos
+        $atributos = $this->sanitizarAtributos();
+
+        // Iterar para ir agregando cada campo de la BD
+        $valores = [];
+        foreach($atributos as $key => $value) {
+            // Si el valor es una cadena vacía o null, lo tratamos como NULL en SQL
+            if ($value === '' || $value === null) {
+                $valores[] = "{$key}=NULL";
+            } else {
+                $valores[] = "{$key}='{$value}'";
+            }
+        }
+
+        // Consulta SQL
+        $query = "UPDATE " . static::$tabla ." SET ";
+        $query .=  join(', ', $valores );
+        $query .= " WHERE id = '" . self::$db->escape_string($this->id) . "' ";
+        $query .= " LIMIT 1 ";
+
+        // Para depuración
+        error_log("Query actualizar: " . $query);
 
         // Actualizar BD
         $resultado = self::$db->query($query);

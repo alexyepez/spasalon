@@ -1,4 +1,13 @@
-<?php 
+<?php
+
+// Desactivar la visualización de errores para las peticiones AJAX/API
+// Configuración de registro de errores para APIs
+if (strpos($_SERVER['REQUEST_URI'], '/api/') === 0) {
+    ini_set('display_errors', 0); // No mostrar errores al navegador
+    ini_set('log_errors', 1); // Habilitar registro de errores
+    ini_set('error_log', __DIR__ . '/../logs/php_errors.log'); // Establecer archivo de registro
+}
+
 
 require_once __DIR__ . '/../includes/app.php';
 require_once __DIR__ . '/../vendor/autoload.php';
@@ -50,6 +59,7 @@ $router->post('/api/familiares/eliminar', [APIController::class, 'eliminarFamili
 $router->post('/api/familiares/actualizar', [APIController::class, 'actualizarFamiliar']);
 
 // AREA PRIVADA
+$router->post('/api/citas/estado', [APIController::class, 'cambiarEstadoCita']);
 $router->get('/cita', [CitaController::class, 'index']);
 
 // API de Citas
