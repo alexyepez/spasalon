@@ -14,7 +14,7 @@ $claseImagen = $claseImagen ?? 'imagen';
         <!-- No incluir nada aquí, el landing tiene su propio head completo -->
     <?php else: ?>
         <!-- Font Awesome solo para páginas que no son landing -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-SFQX1P3omQjR6b/sGmHv9uCnQB8iLZlJbPh1cSgmfKWnDcVjIKruSBGDB7mQk/9ZlGUGbADIBX/ufFRJVAZqmQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous">
 
         <!-- Google Fonts -->
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;700;900&display=swap" rel="stylesheet">
@@ -25,6 +25,21 @@ $claseImagen = $claseImagen ?? 'imagen';
         <!-- Estilos generales (solo para páginas que no son landing) -->
         <link rel="stylesheet" href="/build/css/app.css">
     <?php endif; ?>
+
+    <style>
+        /* Sobrescribir estilos de SweetAlert2 */
+        .swal2-styled.swal2-confirm {
+            background-color: #ff7f00;
+            border-color: #ff7f00;
+        }
+
+        /* También para cuando el botón tiene el foco */
+        .swal2-styled.swal2-confirm:focus {
+            box-shadow: 0 0 0 3px rgba(255, 127, 0, .5);
+        }
+    </style>
+
+
 </head>
 
 <body>

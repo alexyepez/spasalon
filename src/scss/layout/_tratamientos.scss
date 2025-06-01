@@ -1,0 +1,193 @@
+@use 'base/variables' as v;
+@use 'base/mixins' as m;
+
+// Estilos para el listado de tratamientos (en la pestaña "Historial")
+.listado-tratamientos {
+  list-style: none;
+  padding: 0;
+  margin: 2rem 0;
+
+  .tratamiento-item {
+    background-color: #fff;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1.5rem;
+    padding: 1.5rem;
+
+    h3 {
+      color: v.$naranja;
+      margin-top: 0;
+      font-size: 1.8rem;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      margin: 0.5rem 0;
+      line-height: 1.5;
+    }
+  }
+}
+
+// Estilos para el modal de tratamiento (heredados de modal-familiar)
+.modal-tratamiento {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+
+  form {
+    background: v.$negro;
+    width: 100%;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.15);
+    min-width: 320px;
+    gap: 1rem;
+
+    .campo {
+      width: 100%;
+      max-width: 550px;
+      margin: 0 auto 1.5rem auto; // Centrado horizontalmente
+      display: flex;
+      align-items: center;
+      label {
+        flex: 0 0 12rem;
+        color: v.$gris_oscuro;
+      }
+      input, textarea {
+        width: 100%;
+        max-width: 350px;
+      }
+      textarea {
+        height: 100px;
+        resize: vertical;
+      }
+    }
+
+    .boton {
+      background-color: v.$naranja;
+      color: v.$blanco;
+      width: auto !important;
+      min-width: 140px;
+      margin: 0.5rem auto 0 auto; // Centrado horizontalmente
+      display: block;             // Uno debajo del otro
+      align-items: center;
+      font-size: 1.6rem;
+      padding: 0.7rem 1.5rem;
+    }
+  }
+}
+
+#paso-3 {
+  position: relative; // Para posicionar el indicador correctamente
+  background-size: cover; // Mantiene la proporción de la imagen
+  background-position: center; // Centra la imagen
+  background-repeat: no-repeat; // Evita la repetición
+
+  .listado-historico {
+    max-height: 70vh;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.05);
+      border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: rgba(0, 0, 0, 0.2);
+      border-radius: 4px;
+    }
+  }
+}
+
+// Indicadores de scroll específicos para el historial
+#historial-scroll-down, #historial-scroll-up {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 8px 16px;
+  border-radius: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 10;
+  cursor: pointer;
+
+  span {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: v.$naranja;
+    font-weight: bold;
+  }
+}
+
+#historial-scroll-down {
+  bottom: 20px;
+
+  .arrow-down {
+    width: 20px;
+    height: 20px;
+    border: solid v.$naranja;
+    border-width: 0 3px 3px 0;
+    display: inline-block;
+    padding: 3px;
+    transform: rotate(45deg);
+    animation: bounce-down-historial 1.5s infinite;
+  }
+}
+
+#historial-scroll-up {
+  top: 120px; // Posicionado en la parte superior
+
+  .arrow-up {
+    width: 20px;
+    height: 20px;
+    border: solid v.$naranja;
+    border-width: 0 3px 3px 0;
+    display: inline-block;
+    padding: 3px;
+    transform: rotate(-135deg); // Flecha apuntando hacia arriba
+    animation: bounce-up-historial 1.5s infinite;
+  }
+}
+
+// Animaciones específicas para el historial
+@keyframes bounce-down-historial {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0) rotate(45deg);
+  }
+  40% {
+    transform: translateY(-10px) rotate(45deg);
+  }
+  60% {
+    transform: translateY(-5px) rotate(45deg);
+  }
+}
+
+@keyframes bounce-up-historial {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0) rotate(-135deg);
+  }
+  40% {
+    transform: translateY(10px) rotate(-135deg);
+  }
+  60% {
+    transform: translateY(5px) rotate(-135deg);
+  }
+}
+
+// Ocultar los indicadores cuando no son necesarios
+#historial-scroll-down.hide, #historial-scroll-up.hide {
+  display: none;
+}

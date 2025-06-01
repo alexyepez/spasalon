@@ -24,21 +24,35 @@ body, .contenedor-principal {
     .listado-citas {
         max-height: 70vh;
         overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: calc(v.$separacion / 4);
+        border: 1px solid rgba(0, 0, 0, 0.1); /* Agrega un borde visible */
+
 
         &::-webkit-scrollbar {
             width: 8px;
+
         }
 
         &::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.05);
+            background: rgba(255, 255, 255, 0.05);
             border-radius: 4px;
         }
 
         &::-webkit-scrollbar-thumb {
-            background-color: rgba(0, 0, 0, 0.2);
+            background-color: rgba(255, 255, 255, 0.5);
             border-radius: 4px;
         }
     }
+}
+
+// Modificar .listado-citas para que no tenga scroll propio
+.listado-citas {
+    display: flex;
+    flex-direction: column;
+    gap: calc(v.$separacion / 4);
+    padding-right: 10px;
 }
 
 // Indicador de scroll - MOVIDO FUERA DEL SELECTOR #paso-2
@@ -153,12 +167,6 @@ body, .contenedor-principal {
             color: v.$negro;
         }
     }
-}
-
-.listado-citas {
-    display: flex;
-    flex-direction: column;
-    gap: calc(v.$separacion / 4);
 }
 
 .cita {
@@ -307,10 +315,3 @@ body, .contenedor-principal {
         font-size: 2rem;
     }
 }
-
-#paso-2 {
-    background-size: cover; // Mantiene la proporción de la imagen
-    background-position: center; // Centra la imagen
-    background-repeat: no-repeat; // Evita la repetición
-}
-

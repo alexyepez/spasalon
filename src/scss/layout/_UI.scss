@@ -1,11 +1,16 @@
 @use 'base/variables' as v;
 @use 'base/mixins' as m;
 
+@use 'sass:color';
+
 .contenedor-app {
     @include m.tablet {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         min-height: 100vh;
+        @include m.tablet {
+            overflow: scroll;
+        }
     }
 
     .imagen {
@@ -54,8 +59,21 @@
         transition: background-color 0.3s ease;
 
         &:hover {
-            background-color: darken(v.$pastel, 10%);
+            background-color: color.mix(v.$negro, v.$pastel, 10%);
         }
     }
+}
 
+.barra-servicios {
+    margin-bottom: v.$separacion;
+
+    @include m.tablet {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .boton {
+        margin: 0 0 1rem 0;
+    }
 }

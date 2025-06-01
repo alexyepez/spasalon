@@ -96,7 +96,6 @@ class LoginController {
         $_SESSION=[];
 
         header('Location: /login');
-
     }
 
     public static function olvide( Router $router) {

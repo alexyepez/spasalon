@@ -1,5 +1,9 @@
 
 <?php
+// Se configura la zona horaria para Colombia
+date_default_timezone_set('America/Bogota');
+$fechaHoy = date('Y-m-d');
+
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 use Model\Cliente;
@@ -45,7 +49,6 @@ use Model\Familiar;
     <div id="paso-2" class="seccion">
         <h2>Citas Asignadas</h2>
         <p class="text-center">Gestiona tus citas del día</p>
-
         <div class="listado-citas">
             <?php if (empty($citas)): ?>
                 <p class="text-center alerta info">No tienes citas asignadas para hoy.</p> <!-- Usar clase info o similar -->
@@ -160,16 +163,26 @@ use Model\Familiar;
             <span>Más citas arriba</span>
             <div class="arrow-up"></div>
         </div>
-
-
     </div>
 
     <div id="paso-3" class="seccion">
         <h2>Historial de Tratamientos</h2>
         <p class="text-center">Registro histórico de tratamientos realizados</p>
         <div id="historial-tratamientos" class="listado-historico">
-            <!-- Se llenará dinámicamente con JavaScript si se implementa cargarHistorialTratamientos -->
+            <!-- Se llenará dinámicamente con JavaScript al implementar cargarHistorialTratamientos -->
             <p>El historial se cargará aquí.</p>
+        </div>
+
+        <!-- Indicador de scroll hacia abajo para historial -->
+        <div id="historial-scroll-down" class="scroll-indicator scroll-down">
+            <span>Más tratamientos abajo</span>
+            <div class="arrow-down"></div>
+        </div>
+
+        <!-- Indicador de scroll hacia arriba para historial -->
+        <div id="historial-scroll-up" class="scroll-indicator scroll-up">
+            <span>Más tratamientos arriba</span>
+            <div class="arrow-up"></div>
         </div>
     </div>
 
@@ -178,6 +191,29 @@ use Model\Familiar;
         <button id="siguiente" class="boton">Siguiente &raquo;</button>
     </div>
 </div>
+
+<!-- Modal para Registrar Tratamiento -->
+<div id="modal-tratamiento" class="modal-tratamiento" style="display: none;">
+    <form id="form-tratamiento" class="formulario">
+        <div id="alerta-modal-tratamiento"></div>
+        <input type="hidden" name="cita_id" id="tratamiento-cita-id">
+        <input type="hidden" name="registrar_tratamiento" value="1">
+
+        <div class="campo">
+            <label for="tratamiento-fecha">Fecha:</label>
+            <input type="date" name="fecha" id="tratamiento-fecha" value="<?php echo date('Y-m-d'); ?>" required>
+        </div>
+
+        <div class="campo">
+            <label for="tratamiento-notas">Notas:</label>
+            <textarea id="tratamiento-notas" name="notas" placeholder="Describa el tratamiento realizado"></textarea>
+        </div>
+
+        <button type="submit" class="boton">Guardar</button>
+        <button type="button" id="btn-cerrar-modal-tratamiento" class="boton boton-cancelar">Cancelar</button>
+    </form>
+</div>
+
 
 <?php
 // Se asegura que $colaborador->id exista y sea el correcto.

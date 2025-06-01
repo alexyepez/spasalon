@@ -158,6 +158,12 @@ class ActiveRecord {
         return $resultado; // Retorna el array completo de objetos
     }
 
+    // Consulta plana de SQL (Se utiliza cuando los métodos de ActiveRecord no son suficientes)
+    public static function SQL($query) {
+        $resultado = self::consultarSQL($query);
+        return $resultado;
+    }
+
     // Obtener todos los registros por varias columnas
     public static function whereAllMultiple($condiciones) {
         $condicionesSQL = [];
@@ -216,6 +222,8 @@ class ActiveRecord {
 
         // Crear consulta con manejo adecuado de NULL
         $query = "INSERT INTO " . static::$tabla . " ($columnas) VALUES ($valores)";
+
+        //var_dump("Query crear: " . $query);
 
         // Ejecutar la consulta
         $resultado = self::$db->query($query);

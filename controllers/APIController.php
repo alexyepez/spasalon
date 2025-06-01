@@ -9,6 +9,7 @@ use Model\Colaborador;
 use Model\Cliente;
 use \Model\CitaServicio;
 use \Model\CitaCancelacion;
+use \Model\HistorialTratamiento;
 
 class APIController {
     public static function index() {
@@ -219,61 +220,6 @@ class APIController {
         echo json_encode(['resultado' => true]);
     }
 
-    /*
-
-    public static function cambiarEstadoCita() {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            echo json_encode(['resultado' => false, 'mensaje' => 'Método no permitido']);
-            return;
-        }
-
-        $cita_id = $_POST['cita_id'] ?? null;
-        $accion = $_POST['accion'] ?? '';
-
-        if (!$cita_id) {
-            echo json_encode(['resultado' => false, 'mensaje' => 'ID de cita no proporcionado']);
-            return;
-        }
-
-        // Buscar la cita
-        $cita = Cita::find($cita_id);
-        if (!$cita) {
-            echo json_encode(['resultado' => false, 'mensaje' => 'Cita no encontrada']);
-            return;
-        }
-
-        // Realizar la acción según lo solicitado
-        switch ($accion) {
-            case 'confirmar':
-                $cita->estado = 1; // Confirmada
-                break;
-            case 'cancelar':
-                $cita->estado = 2; // Cancelada
-                $motivo = $_POST['motivo'] ?? 'No especificado';
-
-                // Guardar el motivo de cancelación
-                $cancelacion = new CitaCancelacion([
-                    'cita_id' => $cita_id,
-                    'motivo' => $motivo,
-                    'fecha' => date('Y-m-d')
-                ]);
-                $cancelacion->guardar();
-                break;
-            default:
-                echo json_encode(['resultado' => false, 'mensaje' => 'Acción no válida']);
-                return;
-        }
-
-        // Guardar los cambios
-        $resultado = $cita->guardar();
-
-        if ($resultado) {
-            echo json_encode(['resultado' => true, 'mensaje' => 'Estado de cita actualizado correctamente']);
-        } else {
-            echo json_encode(['resultado' => false, 'mensaje' => 'Error al actualizar el estado de la cita']);
-        }
-    } */
-
     public static function cambiarEstadoCita() {
         // Establecer el tipo de contenido como JSON
         header('Content-Type: application/json');
@@ -347,5 +293,76 @@ class APIController {
         exit; // Asegurarse de que no se envíe ningún otro contenido
     }
 
+    // Obtener tratamientos de un terapeuta
+    public static function tratamientos() {
+        // Establecer el tipo de contenido como JSON
+        header('Content-Type: application/json');
+
+        try {
+            $terapeutaId = $_GET['terapeutaId'] ?? null;
+
+            if (!$terapeutaId) {
+                echo json_encode(['resultado' => false, 'mensaje' => 'Terapeuta ID no proporcionado']);
+                return;
+            }
+
+            // Buscar tratamientos del terapeuta
+            $tratamientos = HistorialTratamiento::whereAll('colaborador_id', $terapeutaId);
+
+            // Buscar las citas relacionadas con estos tratamientos
+            foreach ($tratamientos as $tratamiento) {
+                // Buscar citas que coincidan con este tratamiento (por cliente_id, servicio_id y fecha)
+                $citas = Cita::whereAllMultiple([
+                    'cliente_id' => $tratamiento->cliente_id,
+                    'colaborador_id' => $tratamiento->colaborador_id
+                ]);
+
+                // Si encontramos citas relacionadas, usar la primera
+                if (!empty($citas)) {
+                    // Buscar la cita más cercana a la fecha del tratamiento
+                    $citaMasCercana = null;
+                    $diferenciaMinima = PHP_INT_MAX;
+
+                    foreach ($citas as $cita) {
+                        $fechaTratamiento = strtotime($tratamiento->fecha);
+                        $fechaCita = strtotime($cita->fecha);
+                        $diferencia = abs($fechaTratamiento - $fechaCita);
+
+                        if ($diferencia < $diferenciaMinima) {
+                            $diferenciaMinima = $diferencia;
+                            $citaMasCercana = $cita;
+                        }
+                    }
+
+                    if ($citaMasCercana) {
+                        $tratamiento->cita_id = $citaMasCercana->id;
+                    }
+                } else {
+                    // Si no hay cita relacionada, usar un valor genérico
+                    $tratamiento->cita_id = null;
+                }
+            }
+
+            // Ordenar por fecha descendente (más recientes primero)
+            usort($tratamientos, function($a, $b) {
+                return strtotime($b->fecha) - strtotime($a->fecha);
+            });
+
+            echo json_encode($tratamientos);
+        } catch (\Exception $e) {
+            echo json_encode(['resultado' => false, 'mensaje' => 'Error en el servidor: ' . $e->getMessage()]);
+        }
+        exit;
+    }
+
+    public static function eliminar() {
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $id = $_POST['id'];
+            $cita = Cita::find($id);
+            $cita->eliminar();
+            header('Location:' . $_SERVER['HTTP_REFERER']);
+        }
+    }
 }
 

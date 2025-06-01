@@ -9,7 +9,12 @@ use Model\Familiar;
 class CitaController {
 
     public static function index( Router $router ) {
-        session_start();
+        //session_start();
+
+        // Alternativa: Verificar si ya hay una sesión activa
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
 
 
         // Llama a la función isAuth() para verificar si el usuario está autenticado.

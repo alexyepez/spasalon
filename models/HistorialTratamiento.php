@@ -37,7 +37,14 @@ class HistorialTratamiento extends ActiveRecord {
         return self::$alertas;
     }
 
+    // Obtener la cita asociada
     public function getCita() {
         return Cita::find($this->cliente_id);
     }
+
+    // Obtener el colaborador/terapeuta asociado
+    public function getColaborador() {
+        return Colaborador::find($this->colaborador_id);
+    }
+
 }

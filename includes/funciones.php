@@ -14,6 +14,13 @@ function s($html) : string {
     return $s;
 }
 
+function esUltimo(string $actual, string $proximo) : bool {
+    if ($actual !== $proximo) {
+        return true;
+    }
+    return false;
+}
+
 // Verificar si usuario es terapeuta
 function esTerapeuta() : bool {
     if (!isset($_SESSION['rol_id'])) {
@@ -47,6 +54,13 @@ function redireccionar(string $url) : void {
 // Función que revisa que el usuario está autenticado
 function isAuth() : void {
     if (!isset($_SESSION['login'])) {
+        header('Location: /login');
+    }
+}
+
+// Función que valida si alguien es administrador
+function isAdmin() : void {
+    if(!isset($_SESSION['admin'])) {
         header('Location: /login');
     }
 }

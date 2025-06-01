@@ -328,6 +328,7 @@ async function reservarCita(e) {
                 title: "Cita Creada!",
                 icon: "success",
                 texto: "Tu cita fue creada exitosamente.",
+                confirmButtonColor: '#ff7f00',
                 button: "OK",
             }).then(() => {
                 window.location.href = '/cita';
@@ -339,6 +340,7 @@ async function reservarCita(e) {
                 icon: "error",
                 title: "Error",
                 text: "Error al reservar la cita!",
+                confirmButtonColor: '#ff7f00',
                 button: "OK",
             });
         }
@@ -348,6 +350,7 @@ async function reservarCita(e) {
             icon: "error",
             title: "Error",
             text: "Error de conexión al reservar la cita!",
+            confirmButtonColor: '#ff7f00',
             button: "OK",
         });
         //mostrarAlerta('Error de conexión al reservar la cita', 'error', '.contenido-resumen');

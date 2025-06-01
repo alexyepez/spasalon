@@ -32,7 +32,6 @@ function mostrarSeccionTerapeuta() {
         console.error('No se encontró la sección:', pasoSelector);
     }
 
-
     const tabAnterior = document.querySelector('#app .tabs button.actual');
     if (tabAnterior) {
         tabAnterior.classList.remove('actual');
@@ -45,11 +44,16 @@ function mostrarSeccionTerapeuta() {
         console.error('No se encontró el tab:', `[data-paso="${pasoTerapeuta}"]`);
     }
 
-    // Inicializar el indicador de scroll solo para la página de citas
+    // Inicializar indicadores según la pestaña
     if (pasoTerapeuta === 2) {
+        // Indicadores para citas
         setTimeout(inicializarIndicadorScroll, 100);
+    } else if (pasoTerapeuta === 3) {
+        // Cargar historial y sus indicadores
+        cargarHistorialTratamientos();
+        // setTimeout para dar tiempo a que el historial se cargue
+        setTimeout(inicializarIndicadoresScrollHistorial, 500);
     }
-
 }
 
 function tabsTerapeuta() {
@@ -82,7 +86,6 @@ function botonesPaginadorTerapeuta() {
         // Aquí podrías llamar a una función para cargar el historial si es necesario
         // cargarHistorialTratamientos(); 
     }
-    // No es necesario llamar a mostrarSeccionTerapeuta() aquí de nuevo si tabsTerapeuta ya lo hace.
 }
 
 function paginaAnteriorTerapeuta() {
@@ -107,17 +110,174 @@ function paginaSiguienteTerapeuta() {
     });
 }
 
-// --- Funciones para acciones de citas ---
-function registrarTratamiento(citaId) {
-    console.log('Intentando registrar tratamiento para cita:', citaId);
-    // Lógica para registrar tratamiento (puede ser un modal, etc.)
-    // Ejemplo: podrías mostrar un modal que esté oculto
-    // const modal = document.getElementById('modal-registrar-tratamiento');
-    // if (modal) {
-    //     // Cargar datos de la cita en el modal si es necesario
-    //     modal.style.display = 'block';
-    // }
-    alert(`Registrar tratamiento para cita ID: ${citaId}. Implementar lógica.`);
+// Función para manejar el registro de tratamiento mediante SweetAlert2
+async function registrarTratamiento(citaId) {
+    //console.log('Iniciando registro de tratamiento para cita:', citaId);
+
+    error_log('Fecha recibida: ' . $_POST['fecha']);
+
+    // Obtener la fecha actual y restar un día para compensar el desfase
+    const ahora = new Date();
+    ahora.setDate(ahora.getDate()); // Usamos la fecha actual
+
+    const año = ahora.getFullYear();
+    const mes = String(ahora.getMonth() + 1).padStart(2, '0');
+    const dia = String(ahora.getDate()).padStart(2, '0');
+
+    // Formato YYYY-MM-DD
+    const fechaActual = `${año}-${mes}-${dia}`;
+
+    console.log("Fecha que se usará en el modal:", fechaActual);
+
+
+    const { value: formValues, isConfirmed } = await Swal.fire({
+        title: 'Registrar Tratamiento',
+        html:
+            `<form id="swal-tratamiento-form">
+                <div class="swal2-input-container">
+                    <label for="swal-fecha">Fecha del tratamiento</label>
+                    <input id="swal-fecha" type="date" class="swal2-input" value="${fechaActual}" required>
+                </div>
+                <div class="swal2-input-container">
+                    <label for="swal-notas">Notas del tratamiento</label>
+                    <textarea id="swal-notas" class="swal2-textarea" placeholder="Describa el tratamiento realizado"></textarea>
+                </div>
+            </form>`,
+        focusConfirm: false,
+        showCancelButton: true,
+        confirmButtonText: 'Guardar',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#ff7f00',
+        preConfirm: () => {
+            const fecha = document.getElementById('swal-fecha').value;
+            const notas = document.getElementById('swal-notas').value;
+
+            if (!fecha) {
+                Swal.showValidationMessage('La fecha es obligatoria');
+                return false;
+            }
+
+            return { fecha, notas };
+        }
+    });
+
+    if (!isConfirmed || !formValues) {
+        //console.log('Usuario canceló el registro de tratamiento');
+        return;
+    }
+
+    try {
+        // Mostrar indicador de carga
+        Swal.fire({
+            title: 'Procesando...',
+            text: 'Registrando el tratamiento',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        const formData = new FormData();
+        formData.append('cita_id', citaId);
+        formData.append('fecha', formValues.fecha);
+        formData.append('notas', formValues.notas);
+        formData.append('registrar_tratamiento', '1');
+
+        console.log('Enviando datos:', {
+            cita_id: citaId,
+            fecha: formValues.fecha,
+            notas: formValues.notas
+        });
+
+        const respuesta = await fetch('/terapeuta/index', {
+            method: 'POST',
+            body: formData
+        });
+
+        // Si la respuesta no es un JSON (porque redirige), recargar la página
+        if (respuesta.redirected || respuesta.url.includes('?exito=')) {
+            console.log('Tratamiento registrado correctamente, redirigiendo...');
+            Swal.fire({
+                title: '¡Tratamiento Registrado!',
+                text: 'El tratamiento ha sido registrado correctamente.',
+                icon: 'success',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#ff7f00',
+            }).then(() => {
+                window.location.reload();
+            });
+            return;
+        }
+
+        // Obtener texto de la respuesta
+        const respuestaTexto = await respuesta.text();
+        console.log('Respuesta del servidor:', respuestaTexto);
+
+        // Buscar el contenido JSON en la respuesta
+        let jsonStr = respuestaTexto;
+
+        // Si la respuesta contiene avisos/errores de PHP, extraer solo la parte JSON
+        if (respuestaTexto.includes('<br />') || respuestaTexto.includes('<b>')) {
+            // Buscar texto que parece ser JSON (comienza con { y termina con })
+            const jsonMatch = respuestaTexto.match(/(\{.*\})/s);
+            if (jsonMatch) {
+                jsonStr = jsonMatch[0];
+                console.log('JSON extraído de la respuesta:', jsonStr);
+            } else {
+                console.error('No se pudo extraer JSON de la respuesta');
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al procesar la respuesta del servidor',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#ff7f00',
+                });
+                return;
+            }
+        }
+
+        // Intentar analizar el JSON extraído
+        try {
+            const resultado = JSON.parse(jsonStr);
+            if (resultado.resultado) {
+                Swal.fire({
+                    title: '¡Tratamiento Registrado!',
+                    text: 'El tratamiento ha sido registrado correctamente.',
+                    icon: 'success',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#ff7f00',
+                }).then(() => {
+                    window.location.reload();
+                });
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: resultado.mensaje || 'Error al registrar el tratamiento',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#ff7f00',
+                });
+            }
+        } catch (e) {
+            console.error('Error al analizar respuesta JSON:', e);
+            Swal.fire({
+                title: 'Error',
+                text: 'Error al procesar la respuesta del servidor',
+                icon: 'error',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#ff7f00',
+            });
+        }
+    } catch (error) {
+        console.error('Error al enviar solicitud:', error);
+        Swal.fire({
+            title: 'Error',
+            text: `Error de conexión: ${error.message}`,
+            icon: 'error',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#ff7f00',
+        });
+    }
 }
 
 function verDetalles(citaId) {
@@ -152,8 +312,8 @@ function asignarEventosBotonesCitas() {
     });
 }
 
-// Función para registrar tratamiento (cambia el estado a Confirmada)
-async function registrarTratamiento(citaId) {
+// Función para confirmar tratamiento (cambia el estado a Confirmada)
+async function confirmarTratamiento(citaId) {
     console.log('Intentando registrar tratamiento para cita:', citaId);
 
     const { isConfirmed } = await Swal.fire({
@@ -453,68 +613,203 @@ function inicializarIndicadorScroll() {
     });
 }
 
-/*
-function asignarEventosBotonesCitas() {
-    // Seleccionar todos los botones de "Registrar Tratamiento"
-    // Es importante que estos botones no tengan el atributo onclick en el HTML
-    const botonesRegistrar = document.querySelectorAll('.cita-acciones button.boton');
-    botonesRegistrar.forEach(boton => {
-        // Verificar si el botón es para registrar tratamiento (podrías añadir una clase específica)
-        if (boton.textContent.trim().toLowerCase().includes('registrar tratamiento')) {
-            const citaId = boton.getAttribute('data-id-cita');
-            if (citaId) {
-                // Remover cualquier listener onclick inline si existiera accidentalmente
-                boton.onclick = null;
-                boton.addEventListener('click', () => registrarTratamiento(citaId));
-            }
+async function cargarHistorialTratamientos() {
+    try {
+        console.log('Cargando historial de tratamientos para terapeuta:', window.terapeutaId);
+        const respuesta = await fetch(`/api/tratamientos?terapeutaId=${window.terapeutaId}`);
+
+        if (!respuesta.ok) {
+            throw new Error(`Error HTTP: ${respuesta.status}`);
         }
+
+        const tratamientos = await respuesta.json();
+        //console.log('Tratamientos obtenidos:', tratamientos);
+
+        const historial = document.querySelector('#historial-tratamientos');
+        historial.innerHTML = '';
+
+        if (!tratamientos || tratamientos.length === 0) {
+            historial.innerHTML = '<p class="text-center alerta info">No hay tratamientos registrados.</p>';
+            return;
+        }
+
+        const ul = document.createElement('ul');
+        ul.className = 'listado-tratamientos';
+
+        tratamientos.forEach(tratamiento => {
+            const li = document.createElement('li');
+            li.className = 'tratamiento-item';
+
+            // Determinar el texto del encabezado basado en si hay un cita_id o no
+            const headerText = tratamiento.cita_id
+                ? `Cita #${tratamiento.cita_id}`
+                : `Tratamiento #${tratamiento.id}`;
+
+            li.innerHTML = `
+                <div class="tratamiento-info">
+                    <h3>${headerText}</h3>
+                    <p><strong>Fecha:</strong> ${formatearFecha(tratamiento.fecha)}</p>
+                    <p><strong>Notas:</strong> ${tratamiento.notas || 'Sin notas'}</p>
+                </div>
+            `;
+
+            ul.appendChild(li);
+        });
+
+        historial.appendChild(ul);
+
+        // Inicializar indicadores de scroll para el historial
+        setTimeout(inicializarIndicadoresScrollHistorial, 100);
+    } catch (error) {
+        console.error('Error al cargar historial de tratamientos:', error);
+        const historial = document.querySelector('#historial-tratamientos');
+        historial.innerHTML = `<p class="text-center alerta error">Error al cargar historial: ${error.message}</p>`;
+    }
+}
+
+function inicializarIndicadoresScrollHistorial() {
+    //DEBUG DE SCROLLS, ELIMINAR DESPUÉS
+    console.log('Inicializando indicadores de scroll para historial');
+
+    const listadoHistorial = document.querySelector('.listado-historico');
+    const indicadorAbajo = document.querySelector('#historial-scroll-down');
+    const indicadorArriba = document.querySelector('#historial-scroll-up');
+
+    console.log('Elementos encontrados:', {
+        listadoHistorial: !!listadoHistorial,
+        indicadorAbajo: !!indicadorAbajo,
+        indicadorArriba: !!indicadorArriba
     });
 
-    // Seleccionar todos los botones de "Ver Detalles"
-    const botonesDetalles = document.querySelectorAll('.cita-acciones button.boton-secundario');
-    botonesDetalles.forEach(boton => {
-        const citaId = boton.getAttribute('data-id-cita');
-        if (citaId) {
-            // Remover cualquier listener onclick inline
-            boton.onclick = null;
-            boton.addEventListener('click', () => verDetalles(citaId));
+    if (!listadoHistorial || !indicadorAbajo || !indicadorArriba) {
+        console.error('No se encontraron elementos necesarios para los indicadores de scroll del historial');
+        return;
+    }
+
+    //if (!listadoHistorial) return;
+
+    // Verificar si ya existen los indicadores, y si no, crearlos
+    let indicadorAbajo = document.querySelector('#historial-scroll-down');
+    let indicadorArriba = document.querySelector('#historial-scroll-up');
+
+    if (!indicadorAbajo) {
+        indicadorAbajo = document.createElement('div');
+        indicadorAbajo.id = 'historial-scroll-down';
+        indicadorAbajo.className = 'scroll-indicator scroll-down';
+        indicadorAbajo.innerHTML = '<span>Más tratamientos abajo</span><div class="arrow-down"></div>';
+        listadoHistorial.parentNode.appendChild(indicadorAbajo);
+    }
+
+    if (!indicadorArriba) {
+        indicadorArriba = document.createElement('div');
+        indicadorArriba.id = 'historial-scroll-up';
+        indicadorArriba.className = 'scroll-indicator scroll-up';
+        indicadorArriba.innerHTML = '<span>Más tratamientos arriba</span><div class="arrow-up"></div>';
+        listadoHistorial.parentNode.appendChild(indicadorArriba);
+    }
+
+    // Ocultar ambos indicadores al inicio
+    indicadorAbajo.classList.add('hide');
+    indicadorArriba.classList.add('hide');
+
+    // Función para verificar la posición de scroll y mostrar/ocultar indicadores
+    function actualizarIndicadores() {
+        const scrollTop = listadoHistorial.scrollTop;
+        const scrollHeight = listadoHistorial.scrollHeight;
+        const clientHeight = listadoHistorial.clientHeight;
+
+        // Verificar si hay contenido por encima y por debajo de la vista actual
+        const hayContenidoArriba = scrollTop > 20; // Margen de 20px para mejor experiencia
+        const hayContenidoAbajo = Math.ceil(scrollTop + clientHeight) < scrollHeight - 20;
+
+        // Actualizar visibilidad de los indicadores
+        if (hayContenidoArriba) {
+            indicadorArriba.classList.remove('hide');
+        } else {
+            indicadorArriba.classList.add('hide');
         }
+
+        if (hayContenidoAbajo) {
+            indicadorAbajo.classList.remove('hide');
+        } else {
+            indicadorAbajo.classList.add('hide');
+        }
+
+        // Si no hay scroll necesario, ocultar ambos indicadores
+        if (scrollHeight <= clientHeight) {
+            indicadorArriba.classList.add('hide');
+            indicadorAbajo.classList.add('hide');
+        }
+    }
+
+    // Verificar al cargar y cuando se hace scroll
+    actualizarIndicadores();
+    listadoHistorial.addEventListener('scroll', actualizarIndicadores);
+
+    // También verificar si el tamaño de la ventana cambia
+    window.addEventListener('resize', actualizarIndicadores);
+
+    // Hacer clic en el indicador inferior hará scroll suave hacia abajo
+    indicadorAbajo.addEventListener('click', () => {
+        listadoHistorial.scrollBy({
+            top: 300, // Desplazar 300px hacia abajo
+            behavior: 'smooth'
+        });
+    });
+
+    // Hacer clic en el indicador superior hará scroll suave hacia arriba
+    indicadorArriba.addEventListener('click', () => {
+        listadoHistorial.scrollBy({
+            top: -300, // Desplazar 300px hacia arriba
+            behavior: 'smooth'
+        });
     });
 }
-*/
 
-// (Opcional) Si necesitas cargar el historial dinámicamente cuando se llega al paso 3:
-// async function cargarHistorialTratamientos() {
-//     const terapeutaId = window.terapeutaId; // Asegúrate que window.terapeutaId esté disponible
-//     if (!terapeutaId) {
-//         console.error('ID del terapeuta no disponible');
-//         return;
-//     }
-//     try {
-//         const respuesta = await fetch(`/api/terapeutas/historial?terapeuta_id=${terapeutaId}`);
-//         if (!respuesta.ok) {
-//             throw new Error(`Error HTTP: ${respuesta.status}`);
-//         }
-//         const historiales = await respuesta.json();
-//         const contenedorHistorial = document.getElementById('historial-tratamientos');
-//         contenedorHistorial.innerHTML = ''; // Limpiar anterior
+// Inicializar la funcionalidad cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', () => {
+    // Inicializar las pestañas
+    tabsTerapeuta();
 
-//         if (historiales.length === 0) {
-//             contenedorHistorial.innerHTML = '<p>No hay tratamientos registrados.</p>';
-//             return;
-//         }
+    // Agregar listeners a los botones de registrar tratamiento
+    const botonesRegistrar = document.querySelectorAll('.registrar-tratamiento');
+    botonesRegistrar.forEach(boton => {
+        boton.addEventListener('click', () => {
+            const citaId = boton.dataset.idCita;
+            registrarTratamiento(citaId);
+        });
+    });
 
-//         const ul = document.createElement('ul');
-//         historiales.forEach(item => {
-//             const li = document.createElement('li');
-//             // Formatear y mostrar la información del historial como desees
-//             li.textContent = `Fecha: ${item.fecha}, Cliente: ${item.cliente_nombre}, Tratamiento: ${item.descripcion}`;
-//             ul.appendChild(li);
-//         });
-//         contenedorHistorial.appendChild(ul);
-//     } catch (error) {
-//         console.error('Error al cargar el historial de tratamientos:', error);
-//         const contenedorHistorial = document.getElementById('historial-tratamientos');
-//         contenedorHistorial.innerHTML = '<p class="alerta error">No se pudo cargar el historial.</p>';
-//     }
-// }
+    // Agregar listeners a los botones de cancelar cita
+    const botonesCancelar = document.querySelectorAll('.cancelar-cita');
+    botonesCancelar.forEach(boton => {
+        boton.addEventListener('click', () => {
+            const citaId = boton.dataset.idCita;
+            cancelarCita(citaId);
+        });
+    });
+
+    // Cargar historial de tratamientos cuando se seleccione esa pestaña
+    const pestanaHistorial = document.querySelector('[data-paso="3"]');
+    if (pestanaHistorial) {
+        pestanaHistorial.addEventListener('click', () => {
+            cargarHistorialTratamientos();
+        });
+    }
+
+    // Si estamos en la pestaña 3 al cargar, iniciar carga del historial
+    if (pasoTerapeuta === 3) {
+        cargarHistorialTratamientos();
+    }
+});
+
+
+// Función auxiliar para formatear fechas
+function formatearFecha(fechaStr) {
+    const fecha = new Date(fechaStr);
+    return fecha.toLocaleDateString('es-ES', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    });
+}
