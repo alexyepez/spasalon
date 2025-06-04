@@ -51,6 +51,26 @@ class Usuario extends ActiveRecord {
         return self::$alertas;
     }
 
+    public function validarNuevoCliente() {
+        if(!$this->nombre) {
+            self::$alertas['error'][] = 'El Nombre es Obligatorio';
+        }
+        if(!$this->apellido) {
+            self::$alertas['error'][] = 'El Apellido es Obligatorio';
+        }
+        if(!$this->email) {
+            self::$alertas['error'][] = 'El Email es Obligatorio';
+        }
+        if(!$this->password) {
+            self::$alertas['error'][] = 'La Contraseña es Obligatoria';
+        }
+        if(strlen($this->password) < 6) {
+            self::$alertas['error'][] = 'La Contraseña debe contener al menos 6 caracteres';
+        }
+        return self::$alertas;
+    }
+
+
     // Validar el login de un usuario
     public function validarLogin() {
         if (!$this->email) {

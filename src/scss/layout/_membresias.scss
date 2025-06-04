@@ -1,0 +1,307 @@
+@use 'base/variables' as v;
+@use 'base/mixins' as m;
+
+.alerta-contenedor-info {
+  .alerta.info {
+    background-color: v.$blanco; // Fondo blanco
+
+    // Sobreescribimos el color del <p> dentro de .alerta.info
+    p {
+      color: v.$naranja; // Texto naranja
+    }
+  }
+}
+
+.alerta-contenedor-exito {
+  .alerta.exito {
+    background-color: v.$blanco; // Fondo blanco
+
+    // Sobreescribimos el color del <p> dentro de .alerta.info
+    p {
+      color: v.$verde; // Texto naranja
+    }
+  }
+}
+
+.membresias {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  max-height: 65vh; // 65% del viewport height
+  overflow-y: auto;
+
+  // Personalización del scroll
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: v.$naranja;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .membresia {
+    margin-bottom: 2rem;
+    padding: 2rem;
+    background-color: v.$blanco;
+    border-radius: 1rem;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+
+    @include m.tablet {
+      display: grid;
+      grid-template-columns: 3fr 1fr;
+      gap: 2rem;
+      align-items: flex-start;
+    }
+
+    .membresia-contenido {
+      h3 {
+        margin: 0 0 1rem 0;
+        color: v.$naranja;
+        font-size: 2.4rem;
+      }
+
+      .precio {
+        font-size: 2rem;
+        font-weight: v.$bold;
+        color: v.$negro;
+        margin: 0.5rem 0;
+      }
+
+      .descuento {
+        color: v.$verde;
+        font-weight: v.$bold;
+        margin: 0.5rem 0;
+
+        span {
+          font-size: 1.8rem;
+        }
+      }
+
+      .clientes-activos {
+        color: v.$azul;
+        margin: 0.5rem 0;
+
+        span {
+          font-weight: v.$bold;
+        }
+      }
+
+      .descripcion, .beneficios {
+        margin-top: 1.5rem;
+
+        h4 {
+          margin: 0 0 0.5rem 0;
+          color: v.$negro;
+          font-size: 1.6rem;
+        }
+
+        p {
+          margin: 0;
+          color: v.$gris_oscuro;
+          line-height: 1.6;
+          white-space: pre-line;
+        }
+      }
+    }
+
+    .acciones {
+      @include m.tablet {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        gap: 1rem;
+      }
+
+      .boton, .boton-eliminar {
+        margin: 0.5rem 0;
+        width: 100%;
+        text-align: center;
+      }
+
+      form {
+        margin: 0;
+      }
+    }
+  }
+}
+
+// Estilos para la lista de membresías de cliente
+.listado-membresias {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  .membresia-item {
+    margin-bottom: 1.5rem;
+    padding: 1.5rem;
+    background-color: v.$blanco;
+    border-radius: 0.8rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+
+    @include m.tablet {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    &.activa {
+      border-left: 5px solid v.$verde;
+    }
+
+    .membresia-info {
+      h3 {
+        margin: 0 0 1rem 0;
+        color: v.$naranja;
+      }
+
+      p {
+        margin: 0.5rem 0;
+        color: v.$negro;
+
+        span {
+          font-weight: v.$bold;
+          color: v.$gris_oscuro;
+
+          &.estado {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 0.5rem;
+            font-size: 1.2rem;
+
+            &.activo {
+              background-color: v.$verde;
+              color: v.$blanco;
+            }
+
+            &.inactivo {
+              background-color: v.$gris_oscuro;
+              color: v.$blanco;
+            }
+          }
+        }
+      }
+    }
+
+    .acciones {
+      margin-top: 1.5rem;
+
+      @include m.tablet {
+        margin-top: 0;
+      }
+    }
+  }
+}
+
+// Estilos para el resumen de membresía
+.resumen-membresia {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background-color: v.$gris_claro;
+  border-radius: 0.8rem;
+
+  h3 {
+    margin: 0 0 1rem 0;
+    color: v.$negro;
+    font-size: 1.8rem;
+  }
+
+  p {
+    margin: 0.5rem 0;
+    color: v.$negro;
+
+    span {
+      font-weight: v.$bold;
+      color: v.$gris_oscuro;
+    }
+  }
+}
+
+// Botones y campos de formulario
+.boton-secundario {
+  @extend .boton;
+  background-color: v.$gris_oscuro;
+  padding: 0.8rem;
+  border-radius: 0.5rem;
+
+  &:hover {
+    background-color: darken(v.$gris_oscuro, 10%);
+  }
+}
+
+.opciones {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  align-items: center;
+
+
+  // Normalizar alturas de ambos botones
+  .boton,
+  .boton-secundario {
+    height: 4rem; // Altura fija para ambos botones
+    line-height: 4rem; // Centra el texto verticalmente
+    padding: 0 2rem; // Ajusta el padding para que sea consistente
+    box-sizing: border-box; // Asegura que el padding no afecte la altura
+    font-size: 1.6rem; // Tamaño de fuente consistente
+  }
+
+  // Ajustes específicos para <input type="submit">
+  .boton {
+    &[type="submit"] {
+      height: 4rem; // Fuerza la misma altura
+      line-height: normal; // Evita conflictos con line-height
+      padding: 0 2rem;
+    }
+  }
+
+  // Ajustes específicos para <a>
+  .boton-secundario {
+    text-decoration: none; // Asegura que el <a> no tenga subrayado
+  }
+}
+
+.formulario {
+  .campo {
+    .descripcion-campo {
+      font-size: 1.2rem;
+      color: v.$gris_oscuro;
+      margin-top: 0.2rem;
+    }
+  }
+}
+
+.barra-servicios {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+// Estilos para precios con descuento
+.precio-original {
+  text-decoration: line-through;
+  color: v.$gris_oscuro;
+  font-size: 0.9em;
+  margin-right: 0.5rem;
+}
+
+.precio-descuento {
+  color: v.$verde;
+  font-weight: v.$bold;
+}
+
+.etiqueta-descuento {
+  background-color: v.$verde;
+  color: v.$blanco;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.3rem;
+  font-size: 0.8em;
+  margin-left: 0.5rem;
+}

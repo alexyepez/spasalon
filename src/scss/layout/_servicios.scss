@@ -3,10 +3,9 @@
 
 .listado-servicios {
     @include m.tablet {
-        display: grid;
-        gap: 2rem;
-        @include m.grid(2, 2rem);
-
+      display: grid;
+      gap: 2rem;
+      @include m.grid(2, 2rem);
     }
 
   .servicio {
@@ -40,7 +39,6 @@
             font-size: 3rem;
             margin: 0;
         }
-    
   }
     
 }

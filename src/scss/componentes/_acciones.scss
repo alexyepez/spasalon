@@ -2,7 +2,7 @@
 @use 'base/mixins' as m;
 
 .acciones {
-    margin-top: v.$separacion;
+    margin-top: calc(v.$separacion / 2);
     @include m.tablet {
         display: flex;
         justify-content: space-between;

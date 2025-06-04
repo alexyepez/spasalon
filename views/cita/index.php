@@ -5,6 +5,7 @@
 
     <a class="boton" href="/logout">Cerrar Sesión</a>
 </div>
+
 <p class="descripcion-pagina">Elige tus servicios e ingresa tus datos</p>
 
 <div id="app">
@@ -88,9 +89,7 @@
                 type="time" name="hora"
                 />
             </div>
-            <!-- Campo para seleccionar el terapeuta -->
-            <!--input type="submit" value="Reservar Cita"-->
-
+            
         </form>
     </div>
 

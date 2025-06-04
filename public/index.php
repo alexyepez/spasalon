@@ -8,9 +8,9 @@ if (strpos($_SERVER['REQUEST_URI'], '/api/') === 0) {
     ini_set('error_log', __DIR__ . '/../logs/php_errors.log'); // Establecer archivo de registro
 }
 
-
 require_once __DIR__ . '/../includes/app.php';
 require_once __DIR__ . '/../vendor/autoload.php';
+require __DIR__ . '/../helpers.php';
 
 use Controllers\APIController;
 use Controllers\CitaController;
@@ -18,6 +18,11 @@ use Controllers\LoginController;
 use Controllers\TerapeutaController;
 use Controllers\AdminController;
 use Controllers\ServicioController;
+use Controllers\ClienteController;
+use Controllers\ProveedorController;
+use Controllers\RecordatorioController;
+use Controllers\MembresiaController;
+use Controllers\ClienteMembresiaController;
 use MVC\Router;
 $router = new Router();
 
@@ -65,7 +70,6 @@ $router->post('/api/familiares/actualizar', [APIController::class, 'actualizarFa
 // AREA PRIVADA
 $router->post('/api/citas/estado', [APIController::class, 'cambiarEstadoCita']);
 $router->get('/cita', [CitaController::class, 'index']);
-$router->get('/admin', [AdminController::class, 'index']);
 
 // API de Citas
 $router->get('/api/servicios', [APIController::class, 'index']);
@@ -79,6 +83,60 @@ $router->post('/servicios/crear', [ServicioController::class, 'crear']);
 $router->get('/servicios/actualizar', [ServicioController::class, 'actualizar']);
 $router->post('/servicios/actualizar', [ServicioController::class, 'actualizar']);
 $router->post('/servicios/eliminar', [ServicioController::class, 'eliminar']);
+
+// Rutas para gestión de terapeutas
+$router->get('/admin', [AdminController::class, 'index']);
+$router->get('/admin/gestionar-terapeutas', [AdminController::class, 'gestionarTerapeutas']);
+$router->get('/admin/crear-terapeuta', [AdminController::class, 'crearTerapeuta']);
+$router->post('/admin/crear-terapeuta', [AdminController::class, 'crearTerapeuta']);
+$router->post('/admin/actualizar-terapeuta', [AdminController::class, 'actualizarTerapeuta']);
+$router->post('/admin/eliminar-terapeuta', [AdminController::class, 'eliminarTerapeuta']);
+$router->post('/admin/asignar-cita', [AdminController::class, 'asignarCita']);
+
+// Rutas para gestión de clientes
+$router->get('/admin/gestionar-clientes', [ClienteController::class, 'index']);
+$router->get('/admin/crear-cliente', [ClienteController::class, 'crear']);
+$router->post('/admin/crear-cliente', [ClienteController::class, 'crear']);
+$router->post('/admin/actualizar-cliente', [ClienteController::class, 'actualizar']);
+$router->post('/admin/eliminar-cliente', [ClienteController::class, 'eliminar']);
+
+// Rutas para Proveedores e Inventario
+$router->get('/admin/gestionar-proveedores', [ProveedorController::class, 'index']);
+$router->get('/admin/crear-proveedor', [ProveedorController::class, 'crear']);
+$router->post('/admin/crear-proveedor', [ProveedorController::class, 'crear']);
+$router->post('/admin/actualizar-proveedor', [ProveedorController::class, 'actualizar']);
+$router->post('/admin/eliminar-proveedor', [ProveedorController::class, 'eliminar']);
+
+$router->get('/admin/gestionar-inventario', [ProveedorController::class, 'inventario']);
+$router->get('/admin/crear-inventario', [ProveedorController::class, 'crearInventario']);
+$router->post('/admin/crear-inventario', [ProveedorController::class, 'crearInventario']);
+$router->post('/admin/actualizar-inventario', [ProveedorController::class, 'actualizarInventario']);
+$router->post('/admin/eliminar-inventario', [ProveedorController::class, 'eliminarInventario']);
+
+// Rutas de Recordatorios
+$router->get('/admin/recordatorios', [RecordatorioController::class, 'index']);
+$router->get('/admin/recordatorios/crear', [RecordatorioController::class, 'crear']);
+$router->post('/admin/recordatorios/crear', [RecordatorioController::class, 'crear']);
+$router->post('/admin/eliminar-recordatorio', [RecordatorioController::class, 'eliminar']);
+$router->get('/admin/recordatorios/enviar', [RecordatorioController::class, 'ejecutarEnvio']);
+$router->post('/admin/enviar-recordatorio', [RecordatorioController::class, 'enviarRecordatorioIndividual']);
+
+// Ruta para confirmar citas desde recordatorios
+$router->get('/confirmar-cita', [CitaController::class, 'confirmarCita']);
+
+// Rutas para membresías
+$router->get('/membresias', [MembresiaController::class, 'index']);
+$router->get('/membresias/crear', [MembresiaController::class, 'crear']);
+$router->post('/membresias/crear', [MembresiaController::class, 'crear']);
+$router->get('/membresias/actualizar', [MembresiaController::class, 'actualizar']);
+$router->post('/membresias/actualizar', [MembresiaController::class, 'actualizar']);
+$router->post('/membresias/eliminar', [MembresiaController::class, 'eliminar']);
+
+// Rutas para membresías de clientes
+$router->get('/admin/clientes/membresias', [ClienteMembresiaController::class, 'index']);
+$router->get('/admin/clientes/membresia/crear', [ClienteMembresiaController::class, 'crear']);
+$router->post('/admin/clientes/membresia/crear', [ClienteMembresiaController::class, 'crear']);
+$router->post('/admin/clientes/membresias/eliminar', [ClienteMembresiaController::class, 'eliminar']);
 
 // Comprueba y valida las rutas, que existan y les asigna las funciones del Controlador
 $router->comprobarRutas();

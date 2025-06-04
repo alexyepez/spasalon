@@ -1,0 +1,1 @@
+document.addEventListener("DOMContentLoaded",(function(){document.querySelectorAll(".formulario-eliminar").forEach((e=>{e.addEventListener("submit",(function(e){e.preventDefault();confirm("¿Estás seguro de eliminar esta membresía? Esta acción no se puede deshacer.")&&this.submit()}))}))}));

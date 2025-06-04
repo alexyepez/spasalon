@@ -75,5 +75,120 @@
 
     .boton {
         margin: 0 0 1rem 0;
+        padding: 1rem;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
     }
 }
+
+
+/* Estilos para la barra de administración */
+.barra-admin {
+    display: flex;
+    justify-content: space-between;
+    background-color: darken(v.$gris, 10);
+    padding: 0.5rem;
+    border-radius: 5px;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+
+    @include m.tablet {
+        flex-wrap: nowrap;
+    }
+}
+
+/* Estilos para el menú desplegable */
+.dropdown {
+    position: relative;
+    display: inline-block;
+    margin: 0.3rem;
+    width: calc(50% - 0.6rem); // 2 por fila en móvil
+
+    @include m.tablet {
+        width: auto;
+    }
+}
+
+.dropbtn {
+    background-color: v.$naranja;
+    color: white;
+    font-weight: bold;
+    padding: 0.8rem 1.2rem;
+    font-size: 1.3rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    width: 100%;
+    justify-content: space-between;
+
+    &:hover {
+        background-color: darken(v.$naranja, 5);
+    }
+
+    @include m.tablet {
+        width: auto;
+        justify-content: flex-start;
+    }
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: white;
+    min-width: 200px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 10;
+    border-radius: 5px;
+    overflow: hidden;
+    width: 100%;
+
+    a {
+        color: v.$negro;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+        transition: background-color 0.3s;
+
+        &:hover {
+            background-color: lighten(v.$gris, 40);
+            color: v.$naranja;
+        }
+
+        &.active {
+            background-color: lighten(v.$gris, 40);
+            color: v.$naranja;
+            border-left: 3px solid v.$naranja;
+        }
+    }
+
+    @include m.tablet {
+        width: auto;
+    }
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+/* Responsive design */
+@include m.tablet {
+    .barra-admin {
+        flex-direction: row;
+    }
+
+    .dropdown {
+        width: auto;
+        margin: 0.3rem;
+    }
+
+    .dropdown-content {
+        width: auto;
+    }
+}
+
