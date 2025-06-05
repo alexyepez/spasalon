@@ -106,7 +106,7 @@ function paginaSiguiente() {
 
 async function consultarAPI() {
     try {
-        const url = 'http://localhost:3000/api/servicios'; // URL de la API
+        const url = `${location.origin}/api/servicios`; // URL de la API
         const resultado = await fetch(url); // Realiza una solicitud a la API
         const servicios = await resultado.json(); // Convierte la respuesta a JSON
         mostrarServicios(servicios); // Muestra el resultado en la consola

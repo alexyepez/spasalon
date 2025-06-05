@@ -124,7 +124,7 @@ class ActiveRecord {
                 return $this->actualizar();
             }
         } catch (\Exception $e) {
-            error_log("Error en método guardar(): " . $e->getMessage());
+            //error_log("Error en método guardar(): " . $e->getMessage());
             return false;
         }
     }
@@ -288,7 +288,7 @@ class ActiveRecord {
         $query .= " LIMIT 1 ";
 
         // Para depuración
-        error_log("Query actualizar: " . $query);
+        //error_log("Query actualizar: " . $query);
 
         // Actualizar BD
         $resultado = self::$db->query($query);

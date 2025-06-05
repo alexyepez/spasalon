@@ -69,7 +69,7 @@ class TerapeutaController {
                 // Reemplazar la fecha recibida con la fecha actual
                 $_POST['fecha'] = $fechaActual;
 
-                error_log('Fecha ajustada: Original = ' . $fechaOriginal . ', Ajustada = ' . $_POST['fecha']);
+                //error_log('Fecha ajustada: Original = ' . $fechaOriginal . ', Ajustada = ' . $_POST['fecha']);
             }
 
             $historial = new HistorialTratamiento($_POST);
@@ -101,7 +101,7 @@ class TerapeutaController {
             $historial->fecha = date('Y-m-d');
 
             // Depurar objeto historial después de completar campos
-            error_log('Objeto historial completado: ' . print_r($historial, true));
+            //error_log('Objeto historial completado: ' . print_r($historial, true));
 
             // Validar el historial
             if (empty($alertas)) {
@@ -112,7 +112,7 @@ class TerapeutaController {
                     // Guardar el tratamiento y obtener el resultado
                     $resultado = $historial->guardar();
 
-                    error_log('Resultado de guardar: ' . print_r($resultado, true));
+                    //error_log('Resultado de guardar: ' . print_r($resultado, true));
 
                     if ($resultado['resultado']) {
                         // Actualizar el estado de la cita a "Confirmada" (estado = 1)

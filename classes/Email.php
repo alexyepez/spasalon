@@ -24,11 +24,11 @@ class Email {
         // Crear el objeto de email
         $mail = new PHPMailer();
         $mail->isSMTP(); // Usar SMTP
-        $mail->Host = 'sandbox.smtp.mailtrap.io';
+        $mail->Host = $_ENV['EMAIL_HOST'];
         $mail->SMTPAuth = true;
-        $mail->Port = 2525;
-        $mail->Username = 'c021c0cfe3514e';
-        $mail->Password = '2e65886df67963';
+        $mail->Port = $_ENV['EMAIL_PORT'];
+        $mail->Username = $_ENV['EMAIL_USER'];
+        $mail->Password = $_ENV['EMAIL_PASS'];
         $mail->setFrom('cuentas@luminous.com');
         $mail->addAddress('cuentas@luminous.com', 'Luminous_Spa.com');
         $mail->Subject = 'Confirma tu cuenta';
@@ -39,7 +39,7 @@ class Email {
         $contenido = "<html>";
         $contenido .= "<p><strong>Hola " . $this->email . "</strong> Has creado tu cuenta en
         Luminous Spa, solo debes confirmarla presionando en el siguiente enlace</p>";
-        $contenido .= "<p>Presiona aquí: <a href='http://localhost:3000/confirmar-cuenta?token="
+        $contenido .= "<p>Presiona aquí: <a href='" . $_ENV['APP_URL'] . "/confirmar-cuenta?token="
             . $this->token . "'>Confirmar cuenta</a></p>";
         $contenido .= "<p>Si no solicitaste esta cuenta, puedes ignorar el mensaje</p>";
         $contenido .= "</html>";
@@ -55,11 +55,11 @@ class Email {
         // Crear el objeto de email
         $mail = new PHPMailer();
         $mail->isSMTP(); // Usar SMTP
-        $mail->Host = 'sandbox.smtp.mailtrap.io';
+        $mail->Host = $_ENV['EMAIL_HOST'];
         $mail->SMTPAuth = true;
-        $mail->Port = 2525;
-        $mail->Username = 'c021c0cfe3514e';
-        $mail->Password = '2e65886df67963';
+        $mail->Port = $_ENV['EMAIL_PORT'];
+        $mail->Username = $_ENV['EMAIL_USER'];
+        $mail->Password = $_ENV['EMAIL_PASS'];
         $mail->setFrom('cuentas@luminous.com');
         $mail->addAddress('cuentas@luminous.com', 'Luminous_Spa.com');
         $mail->Subject = 'Restablece tu contraseña';
@@ -70,7 +70,7 @@ class Email {
         $contenido = "<html>";
         $contenido .= "<p><strong>Hola " . $this->nombre . "</strong> Has solicitado restablecer tu
         contraseña, sigue el siguiente enlace para hacerlo</p>";
-        $contenido .= "<p>Presiona aquí: <a href='http://localhost:3000/recuperar?token="
+        $contenido .= "<p>Presiona aquí: <a href='" . $_ENV['APP_URL'] . "/recuperar?token="
             . $this->token . "'>Restablecer password</a></p>";
         $contenido .= "<p>Si no solicitaste este cambio, puedes ignorar el mensaje</p>";
         $contenido .= "</html>";
@@ -86,11 +86,11 @@ class Email {
 
         try {
             $mail->isSMTP(); // Usar SMTP
-            $mail->Host = 'sandbox.smtp.mailtrap.io';
+            $mail->Host = $_ENV['EMAIL_HOST'];
             $mail->SMTPAuth = true;
-            $mail->Port = 2525;
-            $mail->Username = 'c021c0cfe3514e';
-            $mail->Password = '2e65886df67963';
+            $mail->Port = $_ENV['EMAIL_PORT'];
+            $mail->Username = $_ENV['EMAIL_USER'];
+            $mail->Password = $_ENV['EMAIL_PASS'];
             $mail->setFrom('cuentas@luminous.com');
             $mail->addAddress($this->email, $this->nombre); // Usa el email del destinatario
             $mail->Subject = 'Recordatorio de tu Cita en Luminous Spa';
@@ -115,7 +115,7 @@ class Email {
                 $contenido .= "<p>Hora: <strong>" . $this->hora . "</strong></p>";
             }
 
-            $contenido .= "<p>Confirma tu asistencia aquí: <a href='http://localhost:3000/confirmar-cita?token=" . $this->token . "'>Confirmar Cita</a></p>";
+            $contenido .= "<p>Confirma tu asistencia aquí: <a href='" . $_ENV['APP_URL'] . "/confirmar-cita?token=" . $this->token . "'>Confirmar Cita</a></p>";
             $contenido .= "<p>Si no puedes asistir, por favor cancela tu cita con anticipación.</p>";
             $contenido .= "</html>";
 
@@ -123,14 +123,14 @@ class Email {
             $enviado = $mail->send();
 
             if (!$enviado) {
-                error_log("Error al enviar recordatorio: " . $mail->ErrorInfo);
+                //error_log("Error al enviar recordatorio: " . $mail->ErrorInfo);
                 return false;
             }
 
             return true; // Importante: retorna true si el envío fue exitoso
 
         } catch (\Exception $e) {
-            error_log("Excepción al enviar recordatorio: " . $e->getMessage());
+            //error_log("Excepción al enviar recordatorio: " . $e->getMessage());
             return false;
         }
     }

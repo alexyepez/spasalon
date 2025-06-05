@@ -2,10 +2,12 @@
 /config/logs/
 
 # Dependencias de Composer
+vendor/
 /vendor/
 
 # Archivos de entorno
-.env
+includes/.env
+/includes/.env
 
 # Archivos temporales del sistema
 *.log
@@ -24,4 +26,5 @@ Thumbs.db
 .vscode/
 
 # Node modules (si usas Node para assets)
+node_modules
 /node_modules/

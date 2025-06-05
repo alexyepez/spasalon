@@ -114,7 +114,7 @@ function paginaSiguienteTerapeuta() {
 async function registrarTratamiento(citaId) {
     //console.log('Iniciando registro de tratamiento para cita:', citaId);
 
-    error_log('Fecha recibida: ' . $_POST['fecha']);
+    //error_log('Fecha recibida: ' . $_POST['fecha']);
 
     // Obtener la fecha actual y restar un día para compensar el desfase
     const ahora = new Date();

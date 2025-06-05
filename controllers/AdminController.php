@@ -56,7 +56,7 @@ class AdminController {
         }
 
         // Mostrar en log los cliente_id encontrados
-        error_log("Clientes IDs encontrados: " . print_r($clientesIds, true));
+        //error_log("Clientes IDs encontrados: " . print_r($clientesIds, true));
 
         // Paso 3: Obtener membresías activas usando la tabla clientes_membresias
         $membresiasActivas = [];
@@ -96,12 +96,12 @@ class AdminController {
                         'nombre' => $fila['nombre'],
                         'descuento' => (float)$fila['descuento']
                     ];
-                    error_log("Membresía encontrada para cliente ID {$fila['cliente_id']}: {$fila['nombre']} con descuento {$fila['descuento']}%");
+                    //error_log("Membresía encontrada para cliente ID {$fila['cliente_id']}: {$fila['nombre']} con descuento {$fila['descuento']}%");
                 }
 
                 $stmt->close();
             } else {
-                error_log("Error preparando consulta: " . $db->error);
+                //error_log("Error preparando consulta: " . $db->error);
             }
         }
 
@@ -119,7 +119,7 @@ class AdminController {
                 $descuentoAplicado = ($precioOriginal * $cita->descuentoPorcentaje) / 100;
                 $cita->precioConDescuento = $precioOriginal - $descuentoAplicado;
 
-                error_log("Aplicado descuento de {$cita->descuentoPorcentaje}% a cita ID {$cita->id} para cliente ID {$cita->cliente_id}");
+                //error_log("Aplicado descuento de {$cita->descuentoPorcentaje}% a cita ID {$cita->id} para cliente ID {$cita->cliente_id}");
             } else {
                 // Sin membresía
                 $cita->nombreMembresia = '';
@@ -239,7 +239,7 @@ class AdminController {
             header('Content-Type: application/json');
 
             // Registrar datos recibidos
-            error_log("POST datos recibidos: " . print_r($_POST, true));
+            //error_log("POST datos recibidos: " . print_r($_POST, true));
 
             $id = filter_var($_POST['id'], FILTER_VALIDATE_INT);
 
@@ -288,8 +288,8 @@ class AdminController {
             $resultadoUsuario = $usuario->guardar();
             $resultadoColaborador = $colaborador->guardar();
 
-            error_log("Resultado guardar usuario: " . print_r($resultadoUsuario, true));
-            error_log("Resultado guardar colaborador: " . print_r($resultadoColaborador, true));
+            //error_log("Resultado guardar usuario: " . print_r($resultadoUsuario, true));
+            //error_log("Resultado guardar colaborador: " . print_r($resultadoColaborador, true));
 
             // Verificar resultados
             $exito = false;
@@ -335,7 +335,7 @@ class AdminController {
             header('Content-Type: application/json');
 
             // Registrar datos recibidos
-            error_log("POST datos recibidos: " . print_r($_POST, true));
+            //error_log("POST datos recibidos: " . print_r($_POST, true));
 
             $id = filter_var($_POST['id'], FILTER_VALIDATE_INT);
 

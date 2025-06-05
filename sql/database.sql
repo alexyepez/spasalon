@@ -65,6 +65,7 @@ CREATE TABLE citas (
     id INT AUTO_INCREMENT PRIMARY KEY,
     cliente_id INT NOT NULL,
     colaborador_id INT NULL,
+    familiar_id INT NULL,
     fecha DATE NOT NULL,
     hora TIME NOT NULL,
     estado TINYINT NOT NULL DEFAULT 0, -- 0: pendiente, 1: confirmada, 2: cancelada
@@ -88,7 +89,8 @@ CREATE TABLE membresias (
     nombre VARCHAR(100) NOT NULL,
     precio DECIMAL(10,2) NOT NULL,
     descripcion TEXT DEFAULT NULL,
-    beneficios TEXT DEFAULT NULL
+    beneficios TEXT DEFAULT NULL,
+    descuento DECIMAL(5,2) DEFAULT 0 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Tabla: clientes_membresias

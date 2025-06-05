@@ -39,7 +39,7 @@ class MembresiaController {
             // Asignar el conteo calculado
             $membresia->clientesActivos = $clientesActivos;
 
-            error_log("Membresía {$membresia->id} tiene {$membresia->clientesActivos} clientes activos (conteo manual)");
+            //error_log("Membresía {$membresia->id} tiene {$membresia->clientesActivos} clientes activos (conteo manual)");
         }
 
         $router->render('membresias/index', [

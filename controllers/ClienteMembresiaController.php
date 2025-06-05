@@ -35,16 +35,16 @@ class ClienteMembresiaController {
 
         // Si membresiaActiva no es null, verificar sus propiedades
         if ($membresiaActiva) {
-            error_log('Membresía activa encontrada: ' . print_r($membresiaActiva, true));
-            error_log('Tipo de membresiaActiva: ' . gettype($membresiaActiva));
-            error_log('Es objeto: ' . (is_object($membresiaActiva) ? 'Sí' : 'No'));
+            //error_log('Membresía activa encontrada: ' . print_r($membresiaActiva, true));
+            //error_log('Tipo de membresiaActiva: ' . gettype($membresiaActiva));
+            //error_log('Es objeto: ' . (is_object($membresiaActiva) ? 'Sí' : 'No'));
 
             if (is_object($membresiaActiva)) {
                 $props = get_object_vars($membresiaActiva);
-                error_log('Propiedades: ' . print_r($props, true));
+                //error_log('Propiedades: ' . print_r($props, true));
             }
         } else {
-            error_log('No se encontró membresía activa para el cliente ID: ' . $cliente_id);
+            //error_log('No se encontró membresía activa para el cliente ID: ' . $cliente_id);
         }
 
         $membresias = ClienteMembresia::whereAll('cliente_id', $cliente_id);

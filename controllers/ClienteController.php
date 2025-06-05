@@ -133,7 +133,7 @@ class ClienteController {
             header('Content-Type: application/json');
 
             // Registrar datos recibidos
-            error_log("POST datos recibidos: " . print_r($_POST, true));
+            //error_log("POST datos recibidos: " . print_r($_POST, true));
 
             $id = filter_var($_POST['id'], FILTER_VALIDATE_INT);
 
@@ -211,7 +211,7 @@ class ClienteController {
             header('Content-Type: application/json');
 
             // Registrar datos recibidos
-            error_log("POST datos recibidos: " . print_r($_POST, true));
+            //error_log("POST datos recibidos: " . print_r($_POST, true));
 
             $id = filter_var($_POST['id'], FILTER_VALIDATE_INT);
 

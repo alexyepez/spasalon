@@ -24,7 +24,7 @@
 
 
                     <?php
-                    error_log("Membresía {$membresia->id} tiene clientesActivos = " .
+                    //error_log("Membresía {$membresia->id} tiene clientesActivos = " .
                         (isset($membresia->clientesActivos) ? $membresia->clientesActivos : 'no definido'));
                     ?>
 

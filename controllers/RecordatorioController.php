@@ -197,7 +197,7 @@ class RecordatorioController {
                         $enviado = $email->enviarRecordatorio();
                     } catch (\Exception $e) {
                         // Registrar el error específico para este recordatorio
-                        error_log("Error al enviar email para recordatorio ID {$recordatorio->id}: " . $e->getMessage());
+                        //error_log("Error al enviar email para recordatorio ID {$recordatorio->id}: " . $e->getMessage());
                         $erroresAlEnviar[] = "ID {$recordatorio->id}: " . $e->getMessage();
                     }
                 } else {
@@ -210,7 +210,7 @@ class RecordatorioController {
                     if ($recordatorio->guardar()) {
                         $contador++;
                     } else {
-                        error_log("Error al actualizar estado del recordatorio ID {$recordatorio->id} después de enviar.");
+                        //error_log("Error al actualizar estado del recordatorio ID {$recordatorio->id} después de enviar.");
                         $erroresAlEnviar[] = "ID {$recordatorio->id}: No se pudo actualizar el estado a enviado.";
                     }
                 }
@@ -219,7 +219,7 @@ class RecordatorioController {
                 if(!$cita) $msgError .= "Cita no encontrada. ";
                 if(!$cliente) $msgError .= "Cliente no encontrado. ";
                 if($cliente && !isset($cliente->email)) $msgError .= "Email del cliente no disponible.";
-                error_log($msgError);
+                //error_log($msgError);
                 $erroresAlEnviar[] = $msgError;
             }
         }
@@ -369,7 +369,7 @@ class RecordatorioController {
                 try {
                     $enviado = $email->enviarRecordatorio();
                 } catch (\Exception $e) {
-                    error_log("Error al enviar email individual para ID {$recordatorio->id}: " . $e->getMessage());
+                    //error_log("Error al enviar email individual para ID {$recordatorio->id}: " . $e->getMessage());
                     echo json_encode(['resultado' => false, 'mensaje' => 'Error al enviar el email: ' . $e->getMessage()]);
                     return;
                 }
@@ -383,7 +383,7 @@ class RecordatorioController {
                 if($recordatorio->guardar()){
                     echo json_encode(['resultado' => true, 'mensaje' => 'Recordatorio enviado correctamente']);
                 } else {
-                    error_log("Error al actualizar estado del recordatorio ID {$recordatorio->id} después de envío individual.");
+                    //error_log("Error al actualizar estado del recordatorio ID {$recordatorio->id} después de envío individual.");
                     echo json_encode(['resultado' => false, 'mensaje' => 'Recordatorio enviado, pero error al actualizar su estado.']);
                 }
             } else {

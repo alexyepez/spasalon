@@ -47,7 +47,7 @@ class LoginController {
 
 
                         // Debug: Verificar valores antes de redirección
-                        error_log("Usuario autenticado - ID: " . $usuario->id . ", Rol: " . $usuario->rol_id);
+                        //error_log("Usuario autenticado - ID: " . $usuario->id . ", Rol: " . $usuario->rol_id);
 
                         // Redireccionar al panel del administrador o terapeuta
                         if ($usuario->rol_id === '1') {
@@ -57,19 +57,19 @@ class LoginController {
                         } elseif ($usuario->rol_id == 2) { // Terapeuta
                             // Verificar si existe como colaborador
                             $colaborador = Colaborador::where('usuario_id', $usuario->id);
-                            error_log("Resultado búsqueda colaborador: " . json_encode($colaborador));
+                            //error_log("Resultado búsqueda colaborador: " . json_encode($colaborador));
                             if ($colaborador) {
                                 $_SESSION['colaborador_id'] = $colaborador->id;
                                 header('Location: /terapeuta/index');
                             } else {
                                 // Si es terapeuta pero no está registrado como colaborador
-                                error_log("Usuario es terapeuta pero no está registrado como colaborador");
+                                //error_log("Usuario es terapeuta pero no está registrado como colaborador");
                                 Usuario::setAlerta('error', 'No estás registrado como terapeuta');
                                 header('Location: /');
                             }
                         } else {
                             // Cliente
-                            error_log("Redirigiendo a panel de cliente");
+                            //error_log("Redirigiendo a panel de cliente");
                             header('Location: /cita');
                         }
                         exit;

@@ -1,8 +1,15 @@
 <?php
 
 // Conexión a la base de datos
-$db = mysqli_connect('localhost', 'root', 'root', 'spasalon');
+$db = mysqli_connect(
+    $_ENV['DB_HOST'],
+    $_ENV['DB_USER'],
+    $_ENV['DB_PASS'],
+    $_ENV['DB_NAME'],
+);
 
+
+$db->set_charset("utf8");
 
 if (!$db) {
     echo "Error: No se pudo conectar a MySQL.";
@@ -10,11 +17,3 @@ if (!$db) {
     echo "error de depuración: " . mysqli_connect_error();
     exit;
 }
-
-/*
-if ($db) {
-    echo "Conexión exitosa a la base de datos";
-} else {
-    echo "Error en la conexión: " . mysqli_connect_error();
-}
-*/
