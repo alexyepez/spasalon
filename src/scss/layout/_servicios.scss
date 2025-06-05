@@ -2,43 +2,114 @@
 @use 'base/mixins' as m;
 
 .listado-servicios {
-    @include m.tablet {
-      display: grid;
-      gap: 2rem;
-      @include m.grid(2, 2rem);
-    }
+  @include m.tablet {
+    display: grid;
+    gap: 2rem;
+    @include m.grid(2, 2rem);
+  }
 
   .servicio {
-        background-color: v.$blanco;
-        padding: 3rem;
-        border-radius: 1rem;
-        transition-property: transform;
-        transition-duration: 0.3s;
-        text-align: center;
+    background-color: v.$blanco;
+    padding: 3rem;
+    border-radius: 1rem;
+    transition-property: transform;
+    transition-duration: 0.3s;
+    text-align: center;
 
-        &.seleccionado {
-            background-color: v.$naranja;
-            p {
-                color: v.$blanco;
-            }
-        }
+    &.seleccionado {
+      background-color: v.$naranja;
+      p {
+        color: v.$blanco;
+      }
+      .precio-con-descuento {
+        color: v.$blanco;
+      }
+      .precio-servicio {
+        color: v.$blanco;
+      }
+    }
 
-        &:hover {
-            transform: scale(1.1);
-        }
+    &:hover {
+      transform: scale(1.1);
+    }
 
-        p {
-            color: v.$negro;
-            margin: 0 0 calc(v.$separacion / 4) 0;
+    p {
+      color: v.$negro;
+      margin: 0 0 calc(v.$separacion / 4) 0;
 
-        }
+    }
 
-        .precio-servicio {
-            color: v.$naranja;
-            font-weight: v.$bold;
-            font-size: 3rem;
-            margin: 0;
-        }
+    .precio-servicio {
+      color: v.$naranja;
+      font-weight: v.$bold;
+      font-size: 3rem;
+      margin: 0;
+    }
   }
-    
+
 }
+
+  /* Estilos para precios con descuento */
+  .precio-original {
+    text-decoration: line-through;
+    color: #888;
+    font-size: 0.9em;
+    margin-right: 10px;
+  }
+
+  .precio-con-descuento, .precio-final {
+    font-weight: bold;
+    color: #ff7f00;
+  }
+
+  .etiqueta-descuento {
+    background-color: #ff7f00;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    margin-left: 8px;
+  }
+
+  .alerta-membresia {
+    margin-bottom: 20px;
+    padding: 15px;
+    border-radius: 5px;
+    background-color: #e8f5e9;
+    border-left: 5px solid #4caf50;
+    max-width: 100%; // Asegurarse de que no se extienda más allá del contenedor
+    box-sizing: border-box; // Incluir padding en el ancho total
+  }
+
+
+  .alerta-membresia p {
+    margin: 5px 0;
+    color: v.$negro;
+  }
+
+  .alerta-membresia strong {
+    color: #2e7d32;
+  }
+
+  .precio-ahorro {
+    color: #2e7d32;
+    font-weight: bold;
+  }
+
+  .nota-membresia {
+    font-style: italic;
+    color: #555;
+    margin-top: 10px;
+    font-size: 0.9em;
+  }
+
+  .contenedor-total {
+    margin-top: 15px;
+    border-top: 1px solid #e1e1e1;
+    padding-top: 10px;
+  }
+
+  .contenedor-servicio {
+    border-bottom: 1px solid #e1e1e1;
+    padding: 10px 0;
+  }

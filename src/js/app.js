@@ -118,28 +118,79 @@ async function consultarAPI() {
 
 function mostrarServicios(servicios) {
     servicios.forEach(servicio => {
-        const { id, nombre, precio } = servicio; // Desestructura el objeto servicio
-        // Crea un nuevo elemento div para cada servicio
-        const nombreServicio = document.createElement('P'); // Crea un nuevo elemento p
-        nombreServicio.classList.add('nombre-servicio'); // Agrega la clase 'servicio' al div creado
-        nombreServicio.textContent = nombre; // Asigna el nombre del servicio al contenido del div
+        const { id, nombre, precio } = servicio;
 
-        const precioServicio = document.createElement('P');
-        precioServicio.classList.add('precio-servicio');
-        precioServicio.textContent = `$ ${precio}`;
-        
         const servicioDiv = document.createElement('DIV');
         servicioDiv.classList.add('servicio');
         servicioDiv.dataset.idServicio = id;
-        servicioDiv.onclick = function() {
-            seleccionarServicio(servicio); // Asigna la función seleccionarServicio al evento onclick del div creado
+
+        const nombreServicio = document.createElement('P');
+        nombreServicio.classList.add('nombre-servicio');
+        nombreServicio.textContent = nombre;
+
+        // Crear elemento para el precio
+        const precioServicio = document.createElement('DIV'); // Cambiado a DIV para mejor estructura
+        precioServicio.classList.add('precio-servicio');
+
+        // Calcular precio con descuento si existe
+        if (window.descuentoMembresia && window.descuentoMembresia > 0) {
+            const descuento = (precio * window.descuentoMembresia) / 100;
+            const precioConDescuento = parseFloat((precio - descuento).toFixed(2));
+
+            // Crear contenedor para precio original (primera línea)
+            const precioOriginalDiv = document.createElement('DIV');
+            precioOriginalDiv.classList.add('precio-linea');
+
+            const precioOriginalSpan = document.createElement('SPAN');
+            precioOriginalSpan.classList.add('precio-original');
+            precioOriginalSpan.textContent = `$${precio}`;
+
+            precioOriginalDiv.appendChild(precioOriginalSpan);
+
+            // Crear contenedor para precio con descuento (segunda línea)
+            const precioDescuentoDiv = document.createElement('DIV');
+            precioDescuentoDiv.classList.add('precio-linea');
+
+            const precioDescuentoSpan = document.createElement('SPAN');
+            precioDescuentoSpan.classList.add('precio-con-descuento');
+            precioDescuentoSpan.textContent = `$${precioConDescuento.toFixed(2)}`;
+
+            // Etiqueta de descuento (en la misma línea que el precio con descuento)
+            const descuentoEtiqueta = document.createElement('SPAN');
+            descuentoEtiqueta.classList.add('etiqueta-descuento');
+            descuentoEtiqueta.textContent = `-${window.descuentoMembresia}%`;
+
+            precioDescuentoDiv.appendChild(precioDescuentoSpan);
+            precioDescuentoDiv.appendChild(descuentoEtiqueta);
+
+            // Añadir ambas líneas al contenedor de precio
+            precioServicio.appendChild(precioOriginalDiv);
+            precioServicio.appendChild(precioDescuentoDiv);
+
+            // Al hacer clic, guardar el servicio con la información de descuento
+            servicioDiv.onclick = function() {
+                seleccionarServicio({
+                    id,
+                    nombre,
+                    precio: precioConDescuento,
+                    precioOriginal: precio,
+                    descuentoAplicado: window.descuentoMembresia
+                });
+            };
+        } else {
+            // Mostrar precio normal
+            precioServicio.textContent = `$${precio}`;
+
+            // Al hacer clic, guardar el servicio normal
+            servicioDiv.onclick = function() {
+                seleccionarServicio({id, nombre, precio});
+            };
         }
 
-        servicioDiv.appendChild(nombreServicio); // Agrega el nombre del servicio al div creado
-        servicioDiv.appendChild(precioServicio); // Agrega el precio del servicio al div creado
+        servicioDiv.appendChild(nombreServicio);
+        servicioDiv.appendChild(precioServicio);
 
-        document.querySelector('#servicios').appendChild(servicioDiv); // Agrega el div creado al contenedor de servicios
-        
+        document.querySelector('#servicios').appendChild(servicioDiv);
     });
 }
 
@@ -208,90 +259,139 @@ function seleccionarHora() {
 
 
 function mostrarResumen() {
-    const resumen = document.querySelector('.contenido-resumen'); // Selecciona el contenedor del resumen
+    const resumen = document.querySelector('.contenido-resumen');
 
-    // Elimina el contenido previo del resumen
-    while (resumen.firstChild) {
-        resumen.removeChild(resumen.firstChild); // Elimina el contenido previo del resumen
+    // Limpiar el contenido HTML
+    while(resumen.firstChild) {
+        resumen.removeChild(resumen.firstChild);
     }
 
-    if (Object.values(cita).includes('') || cita.servicios.length === 0) {
-        // Si hay algún campo vacío, no muestra el resumen
-        mostrarAlerta('Faltan datos de servicio, fecha u hora', 'error', '.contenido-resumen', false); // Muestra un mensaje de error
-        return; // Sale de la función si hay campos vacíos
+    // Verificar que se hayan completado todos los campos
+    if(Object.values(cita).includes('') || cita.servicios.length === 0) {
+        mostrarAlerta('Faltan datos de servicios, fecha u hora', 'error', '.contenido-resumen', false);
+        return;
     }
-    
-    // Formatear el div de resumen
-    const { nombre, fecha, hora, servicios } = cita; // Desestructura el objeto cita para obtener los valores
 
-    // Heading para los servicios seleccionados
-    const headingServicios = document.createElement('H3'); // Crea un nuevo elemento h3 para el encabezado de servicios
-    headingServicios.textContent = 'Resumen de Servicios'; // Asigna el texto al encabezado
-    resumen.appendChild(headingServicios); // Agrega el encabezado al contenedor del resumen
+    const { nombre, fecha, hora, servicios } = cita;
 
-    // Itera sobre los servicios seleccionados y los agrega al resumen
+    // Heading de servicios
+    const headingServicios = document.createElement('H3');
+    headingServicios.textContent = 'Resumen de Servicios';
+    resumen.appendChild(headingServicios);
+
+    // Variables para calcular totales
+    let precioTotal = 0;
+    let precioOriginalTotal = 0;
+    let hayDescuento = false;
+
+    // Iterar sobre los servicios
     servicios.forEach(servicio => {
-        const { id, nombre, precio } = servicio; // Desestructura el objeto servicio para obtener los valores
-        
-        const contenedorServicio = document.createElement('DIV'); // Crea un nuevo elemento div para el servicio
-        contenedorServicio.classList.add('contenedor-servicio'); // Agrega la clase 'contenedor-servicio' al div creado
-        
-        const textoServicio = document.createElement('P'); // Crea un nuevo elemento p para el nombre del servicio
-        textoServicio.textContent = nombre; // Asigna el nombre del servicio al contenido del div creado
-        
-        const precioServicio = document.createElement('P'); // Crea un nuevo elemento p para el precio del servicio
-        precioServicio.innerHTML = `<span>Precio:</span> $ ${precio}`; // Asigna el precio del servicio al contenido del div creado
-        
-        contenedorServicio.appendChild(textoServicio); // Agrega el nombre del servicio al div creado
-        contenedorServicio.appendChild(precioServicio); // Agrega el precio del servicio al div creado
+        const { id, nombre, precio } = servicio;
+        const precioOriginal = servicio.precioOriginal || precio;
+        const descuentoAplicado = servicio.descuentoAplicado || 0;
 
-        resumen.appendChild(contenedorServicio); // Agrega el div creado al contenedor del resumen
+        if (servicio.precioOriginal && servicio.descuentoAplicado) {
+            hayDescuento = true;
+            precioOriginalTotal += parseFloat(precioOriginal);
+        }
+
+        precioTotal += parseFloat(precio);
+
+        const divServicio = document.createElement('DIV');
+        divServicio.classList.add('contenedor-servicio');
+
+        const nombreServicio = document.createElement('P');
+        nombreServicio.textContent = nombre;
+
+        const precioServicio = document.createElement('P');
+
+        if (servicio.precioOriginal && servicio.descuentoAplicado) {
+            // Si hay descuento, mostrar ambos precios
+            precioServicio.innerHTML = `
+                <span>Precio:</span> 
+                <span class="precio-original">$${precioOriginal}</span> 
+                <span class="precio-final">$${parseFloat(precio).toFixed(2)}</span>
+                <span class="etiqueta-descuento">-${descuentoAplicado}%</span>
+            `;
+        } else {
+            precioServicio.innerHTML = `<span>Precio:</span> $${precio}`;
+        }
+
+        divServicio.appendChild(nombreServicio);
+        divServicio.appendChild(precioServicio);
+        resumen.appendChild(divServicio);
     });
 
-    // Heading para Cita Resumen
-    const headingCita = document.createElement('H3'); // Crea un nuevo elemento h3 para el encabezado de la cita
-    headingCita.textContent = 'Resumen de la cita'; // Asigna el texto al encabezado
-    resumen.appendChild(headingCita); // Agrega el encabezado al contenedor del resumen
+    // Mostrar total con descuento si aplica
+    if (hayDescuento) {
+        const divTotal = document.createElement('DIV');
+        divTotal.classList.add('contenedor-total');
 
-    const nombreCliente = document.createElement('P'); // Crea un nuevo elemento p para el nombre del cliente
-    nombreCliente.innerHTML = `<span>Nombre:</span> ${nombre}`; // Asigna el nombre del cliente al contenido del p creado
-    
-    // Formatear la fecha
-    const fechaObj = new Date(fecha); // Crea un nuevo objeto de fecha a partir de la fecha seleccionada
+        const totalOriginalP = document.createElement('P');
+        totalOriginalP.innerHTML = `<span>Total original:</span> <span class="precio-original">$${precioOriginalTotal.toFixed(2)}</span>`;
+
+        const totalFinalP = document.createElement('P');
+        totalFinalP.innerHTML = `<span>Total con descuento:</span> <span class="precio-final">$${precioTotal.toFixed(2)}</span>`;
+
+        const ahorroP = document.createElement('P');
+        const ahorro = precioOriginalTotal - precioTotal;
+        ahorroP.innerHTML = `<span>Ahorro:</span> <span class="precio-ahorro">$${ahorro.toFixed(2)}</span>`;
+
+        const notaMembresia = document.createElement('P');
+        notaMembresia.classList.add('nota-membresia');
+        notaMembresia.textContent = `Descuento aplicado por membresía`;
+
+        divTotal.appendChild(totalOriginalP);
+        divTotal.appendChild(totalFinalP);
+        divTotal.appendChild(ahorroP);
+        divTotal.appendChild(notaMembresia);
+        resumen.appendChild(divTotal);
+    }
+
+    // Heading para datos de cita
+    const headingCita = document.createElement('H3');
+    headingCita.textContent = 'Resumen de la cita';
+    resumen.appendChild(headingCita);
+
+    // Formatear nombre
+    const nombreCita = document.createElement('P');
+    nombreCita.innerHTML = `<span>Nombre:</span> ${nombre}`;
+
+    // Formatear fecha
+    const fechaObj = new Date(fecha);
     const mes = fechaObj.getMonth();
     const dia = fechaObj.getDate() + 2;
-    const año = fechaObj.getFullYear();
+    const year = fechaObj.getFullYear();
 
-    const fechaUTC = new Date(Date.UTC(año, mes, dia)); // Crea un nuevo objeto de fecha UTC a partir de la fecha seleccionada
-
-    const opciones = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }; // Opciones para formatear la fecha
+    const fechaUTC = new Date(Date.UTC(year, mes, dia));
+    const opciones = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     const fechaFormateada = fechaUTC.toLocaleDateString('es-CO', opciones);
 
-    const fechaCita = document.createElement('P'); // Crea un nuevo elemento p para la fecha de la cita
-    fechaCita.innerHTML = `<span>Fecha:</span> ${fechaFormateada}`; // Asigna la fecha de la cita al contenido del p creado
+    const fechaCita = document.createElement('P');
+    fechaCita.innerHTML = `<span>Fecha:</span> ${fechaFormateada}`;
 
-    const horaCita = document.createElement('P'); // Crea un nuevo elemento p para la hora de la cita
-    horaCita.innerHTML = `<span>Hora:</span> ${hora} Horas`; // Asigna la hora de la cita al contenido del p creado
+    // Formatear hora
+    const horaCita = document.createElement('P');
+    horaCita.innerHTML = `<span>Hora:</span> ${hora} Horas`;
 
-    // Botón para confirmar cita
-    const botonReservar = document.createElement('BUTTON'); // Crea un nuevo elemento button para reservar la cita
-    botonReservar.classList.add('boton'); // Agrega la clase 'button' al botón creado
+    // Boton para crear una cita
+    const botonReservar = document.createElement('BUTTON');
+    botonReservar.classList.add('boton');
     botonReservar.textContent = 'Reservar Cita';
-    botonReservar.onclick = reservarCita; // Asigna la función reservarCita al evento onclick del botón creado
+    botonReservar.onclick = reservarCita;
 
-    resumen.appendChild(nombreCliente); // Agrega el nombre del cliente al contenedor del resumen
-    resumen.appendChild(fechaCita); // Agrega la fecha de la cita al contenedor del resumen
-    resumen.appendChild(horaCita); // Agrega la hora de la cita al contenedor del resumen
-    resumen.appendChild(botonReservar); // Agrega el botón de reservar al contenedor del resumen
+    // Agregar al resumen
+    resumen.appendChild(nombreCita);
+    resumen.appendChild(fechaCita);
+    resumen.appendChild(horaCita);
+    resumen.appendChild(botonReservar);
 }
 
 // Función nueva para reservar la cita
-async function reservarCita(e) {
-    e.preventDefault();
-
+async function reservarCita() {
     const { servicios, fecha, hora } = cita;
     const selectPersona = document.querySelector('#persona');
-    const personaId = selectPersona.value;
+    const personaId = selectPersona ? selectPersona.value : null;
     const esFamiliar = personaId !== window.clienteId;
 
     if (servicios.length === 0 || !personaId || !fecha || !hora) {
@@ -304,7 +404,9 @@ async function reservarCita(e) {
         clienteId: window.clienteId, // ID del cliente logueado (siempre)
         familiarId: esFamiliar ? personaId : null, // null si es el cliente, ID del familiar si no
         fecha,
-        hora
+        hora,
+        membresiaId: window.idMembresia || null, // ID de la membresía si existe
+        descuento: window.descuentoMembresia || 0 // Porcentaje de descuento
     };
 
     try {
@@ -315,15 +417,10 @@ async function reservarCita(e) {
             },
             body: JSON.stringify(datos)
         });
-        
+
         const resultado = await respuesta.json();
 
         if (resultado.resultado) {
-            /*
-            mostrarAlerta('Cita reservada exitosamente.', 'exito', '.contenido-resumen');
-            setTimeout(() => {
-                window.location.href = '/cita';
-            }, 3000); */
             Swal.fire({
                 title: "Cita Creada!",
                 icon: "success",
@@ -332,14 +429,12 @@ async function reservarCita(e) {
                 button: "OK",
             }).then(() => {
                 window.location.href = '/cita';
-            }, 3000);
-
+            });
         } else {
-            //mostrarAlerta(resultado.mensaje || 'Error al reservar la cita', 'error', '.contenido-resumen');
             Swal.fire({
                 icon: "error",
                 title: "Error",
-                text: "Error al reservar la cita!",
+                text: resultado.mensaje || "Error al reservar la cita!",
                 confirmButtonColor: '#ff7f00',
                 button: "OK",
             });
@@ -353,7 +448,6 @@ async function reservarCita(e) {
             confirmButtonColor: '#ff7f00',
             button: "OK",
         });
-        //mostrarAlerta('Error de conexión al reservar la cita', 'error', '.contenido-resumen');
     }
 }
 

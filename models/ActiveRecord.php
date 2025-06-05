@@ -29,6 +29,12 @@ class ActiveRecord {
         return static::$alertas;
     }
 
+    // Método para obtener la base de datos
+    public static function getDB() {
+        return self::$db;
+    }
+
+
     // Consulta SQL para crear un objeto en Memoria
     public static function consultarSQL($query) {
         //var_dump('Consulta SQL:', $query);

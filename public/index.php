@@ -92,6 +92,7 @@ $router->post('/admin/crear-terapeuta', [AdminController::class, 'crearTerapeuta
 $router->post('/admin/actualizar-terapeuta', [AdminController::class, 'actualizarTerapeuta']);
 $router->post('/admin/eliminar-terapeuta', [AdminController::class, 'eliminarTerapeuta']);
 $router->post('/admin/asignar-cita', [AdminController::class, 'asignarCita']);
+$router->get('/admin/historial-citas', [Controllers\AdminController::class, 'historialCitas']);
 
 // Rutas para gestión de clientes
 $router->get('/admin/gestionar-clientes', [ClienteController::class, 'index']);

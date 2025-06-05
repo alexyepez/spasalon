@@ -69,3 +69,55 @@
     margin: 0;
   }
 }
+
+.membresia-activa {
+  background-color: #e8f5e9;
+  padding: 10px;
+  border-radius: 5px;
+  border-left: 5px solid #4caf50;
+  margin: 10px 0;
+
+  .membresia-activa-label {
+    color: v.$negro;
+  }
+}
+
+.descuento-badge {
+  background-color: #4caf50;
+  color: white;
+  padding: 3px 6px;
+  border-radius: 4px;
+  font-size: 0.8em;
+  margin-left: 8px;
+}
+
+.precio-original {
+  text-decoration: line-through;
+  color: #888;
+  font-size: 0.9em;
+  margin-right: 10px;
+}
+
+.precio-descuento {
+  font-weight: bold;
+  color: #ff7f00;
+}
+
+.total-original {
+  color: #888;
+  text-decoration: line-through;
+  margin-bottom: 5px;
+}
+
+.ahorro {
+  color: #4caf50;
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+.total {
+  font-weight: bold;
+  span {
+    color: #ff7f00;
+  }
+}

@@ -18,7 +18,51 @@
     <div id="paso-1" class="seccion">
         <h2>Servicios</h2>
         <p class="text-center">Elige tus servicios a continuación</p>
+
+        <?php
+        // Verificar si el cliente tiene una membresía activa
+        $hoy = date('Y-m-d');
+        $membresiaActiva = null;
+        $descuentoPorcentaje = 0;
+
+        // Consulta para buscar membresías activas
+        $sql = "SELECT * FROM clientes_membresias 
+            WHERE cliente_id = {$cliente->id} 
+            AND fecha_inicio <= '{$hoy}' 
+            AND fecha_fin >= '{$hoy}'
+            LIMIT 1";
+
+        $clienteMembresia = \Model\ClienteMembresia::SQL($sql);
+
+        if (!empty($clienteMembresia)) {
+            $membresiaActiva = \Model\Membresia::find($clienteMembresia[0]->membresia_id);
+            if ($membresiaActiva) {
+                $descuentoPorcentaje = $membresiaActiva->descuento;
+            }
+        }
+        ?>
+
+        <?php if ($membresiaActiva && $descuentoPorcentaje > 0): ?>
+            <div class="alerta-membresia exito">
+                <p>¡Tienes activa la membresía <strong><?php echo $membresiaActiva->nombre; ?></strong>!</p>
+                <p>Se aplicará un <strong><?php echo $descuentoPorcentaje; ?>%</strong> de descuento en tus servicios.</p>
+            </div>
+        <?php endif; ?>
+
         <div id="servicios" class="listado-servicios"></div>
+
+        <?php if ($membresiaActiva && $descuentoPorcentaje > 0): ?>
+            <script>
+                // Variable global para usar en app.js
+                window.descuentoMembresia = <?php echo $descuentoPorcentaje; ?>;
+                window.idMembresia = <?php echo $membresiaActiva->id; ?>;
+            </script>
+        <?php else: ?>
+            <script>
+                window.descuentoMembresia = 0;
+                window.idMembresia = null;
+            </script>
+        <?php endif; ?>
     </div>
 
     <div id="paso-2" class="seccion">
@@ -79,17 +123,17 @@
             <div class="campo">
                 <label for="fecha">Fecha de la cita</label>
                 <input type="date" id="fecha" name="fecha"
-                min="<?php echo date('Y-m-d', strtotime('+1 day') ); ?>"
+                       min="<?php echo date('Y-m-d', strtotime('+1 day') ); ?>"
                 />
             </div>
 
             <div class="campo">
                 <label for="hora">Hora de la cita</label>
                 <input id="hora"
-                type="time" name="hora"
+                       type="time" name="hora"
                 />
             </div>
-            
+
         </form>
     </div>
 
@@ -110,7 +154,7 @@
 </script>
 
 <?php
-    $script = "
+$script = "
     <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
     <script src='build/js/app.js'></script>
     <script src='build/js/familiares.js'></script>

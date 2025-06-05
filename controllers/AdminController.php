@@ -9,8 +9,7 @@ use Model\Usuario;
 use MVC\Router;
 
 class AdminController {
-    public static function index( Router $router ) {
-        // Alternativa: Verificar si ya hay una sesión activa
+    public static function index(Router $router) {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
@@ -19,28 +18,146 @@ class AdminController {
 
         $fecha = $_GET['fecha'] ?? date('Y-m-d');
         $fechas = explode('-', $fecha);
-        if ( !checkdate( $fechas[1], $fechas[2], $fechas[0] ) ) {
+        if (!checkdate($fechas[1], $fechas[2], $fechas[0])) {
             header('Location: /404');
         }
 
-        // Consultar base de datos
-        $consulta = "SELECT citas.id, citas.hora, CONCAT(usuarios.nombre, ' ', usuarios.apellido) AS cliente, ";
-        $consulta .= " usuarios.email, usuarios.telefono, servicios.nombre AS nombre_servicio, servicios.precio ";
-        $consulta .= " FROM citas ";
-        $consulta .= " LEFT JOIN clientes ON citas.cliente_id = clientes.id ";
-        $consulta .= " LEFT JOIN usuarios ON clientes.usuario_id = usuarios.id ";
-        $consulta .= " LEFT JOIN citas_servicios ON citas_servicios.cita_id = citas.id ";
-        $consulta .= " LEFT JOIN servicios ON citas_servicios.servicio_id = servicios.id ";
-        $consulta .= " WHERE fecha = '${fecha}' ";
+        // Paso 1: Obtener todas las citas con sus servicios y clientes
+        $consulta = "SELECT citas.id, citas.hora, citas.cliente_id, 
+                    CONCAT(usuarios.nombre, ' ', usuarios.apellido) AS cliente, 
+                    usuarios.email, usuarios.telefono, 
+                    servicios.nombre AS nombre_servicio, servicios.precio 
+                FROM citas  
+                LEFT JOIN clientes ON citas.cliente_id = clientes.id 
+                LEFT JOIN usuarios ON clientes.usuario_id = usuarios.id 
+                LEFT JOIN citas_servicios ON citas_servicios.cita_id = citas.id 
+                LEFT JOIN servicios ON servicios.id = citas_servicios.servicio_id 
+                WHERE citas.fecha = '{$fecha}'";
 
         $citas = AdminCita::SQL($consulta);
+
+        // Verificar si hay citas
+        if (empty($citas)) {
+            $router->render('admin/index', [
+                'nombre' => $_SESSION['nombre'],
+                'citas' => [],
+                'fecha' => $fecha,
+                'membresiasActivas' => []
+            ]);
+            return;
+        }
+
+        // Paso 2: Obtener todos los IDs de clientes únicos
+        $clientesIds = [];
+        foreach ($citas as $cita) {
+            if (!empty($cita->cliente_id) && !in_array($cita->cliente_id, $clientesIds)) {
+                $clientesIds[] = $cita->cliente_id;
+            }
+        }
+
+        // Mostrar en log los cliente_id encontrados
+        error_log("Clientes IDs encontrados: " . print_r($clientesIds, true));
+
+        // Paso 3: Obtener membresías activas usando la tabla clientes_membresias
+        $membresiasActivas = [];
+        $hoy = date('Y-m-d');
+
+        if (!empty($clientesIds)) {
+            // Crear consulta para obtener membresías activas
+            $placeholders = implode(',', array_fill(0, count($clientesIds), '?'));
+
+            $consulta = "SELECT cm.cliente_id, m.nombre, m.descuento 
+                    FROM clientes_membresias cm 
+                    JOIN membresias m ON cm.membresia_id = m.id 
+                    WHERE cm.cliente_id IN ($placeholders) 
+                    AND cm.fecha_inicio <= ? 
+                    AND cm.fecha_fin >= ?";
+
+            // Preparar parámetros para la consulta
+            $params = $clientesIds;
+            $params[] = $hoy;
+            $params[] = $hoy;
+
+            // Preparar y ejecutar la consulta SQL manualmente usando ActiveRecord
+            $db = \Model\ActiveRecord::getDB();
+            $stmt = $db->prepare($consulta);
+
+            if ($stmt) {
+                // Crear tipos para bind_param
+                $types = str_repeat('i', count($clientesIds)) . 'ss';
+
+                // Vincular parámetros
+                $stmt->bind_param($types, ...$params);
+                $stmt->execute();
+                $resultado = $stmt->get_result();
+
+                while ($fila = $resultado->fetch_assoc()) {
+                    $membresiasActivas[$fila['cliente_id']] = (object)[
+                        'nombre' => $fila['nombre'],
+                        'descuento' => (float)$fila['descuento']
+                    ];
+                    error_log("Membresía encontrada para cliente ID {$fila['cliente_id']}: {$fila['nombre']} con descuento {$fila['descuento']}%");
+                }
+
+                $stmt->close();
+            } else {
+                error_log("Error preparando consulta: " . $db->error);
+            }
+        }
+
+        // Paso 4: Aplicar descuentos a las citas
+        foreach ($citas as $cita) {
+            if (!empty($cita->cliente_id) && isset($membresiasActivas[$cita->cliente_id])) {
+                $membresiaActiva = $membresiasActivas[$cita->cliente_id];
+
+                // Añadir información de membresía a la cita
+                $cita->nombreMembresia = $membresiaActiva->nombre;
+                $cita->descuentoPorcentaje = $membresiaActiva->descuento;
+
+                // Calcular precio con descuento
+                $precioOriginal = (float)$cita->precio;
+                $descuentoAplicado = ($precioOriginal * $cita->descuentoPorcentaje) / 100;
+                $cita->precioConDescuento = $precioOriginal - $descuentoAplicado;
+
+                error_log("Aplicado descuento de {$cita->descuentoPorcentaje}% a cita ID {$cita->id} para cliente ID {$cita->cliente_id}");
+            } else {
+                // Sin membresía
+                $cita->nombreMembresia = '';
+                $cita->descuentoPorcentaje = 0;
+                $cita->precioConDescuento = (float)$cita->precio;
+            }
+        }
 
         $router->render('admin/index', [
             'nombre' => $_SESSION['nombre'],
             'citas' => $citas,
-            'fecha' => $fecha
+            'fecha' => $fecha,
+            'membresiasActivas' => $membresiasActivas
         ]);
     }
+
+    public static function historialCitas(Router $router) {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        isAdmin();
+
+        $consulta = "SELECT citas.id, citas.fecha, citas.hora, ";
+        $consulta .= " CONCAT(usuarios.nombre, ' ', usuarios.apellido) as cliente ";
+        $consulta .= " FROM citas ";
+        $consulta .= " LEFT JOIN clientes ON citas.cliente_id = clientes.id ";
+        $consulta .= " LEFT JOIN usuarios ON clientes.usuario_id = usuarios.id ";
+        $consulta .= " ORDER BY citas.id ASC "; // MODIFICADO AQUÍ
+
+        $citas = AdminCita::SQL($consulta);
+
+        $router->render('admin/historial-citas', [
+            'nombre' => $_SESSION['nombre'],
+            'citas' => $citas
+        ]);
+    }
+
+
 
     // Método para mostrar la vista de gestión de terapeutas
     public static function gestionarTerapeutas(Router $router) {

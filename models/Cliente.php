@@ -32,6 +32,7 @@ class Cliente extends ActiveRecord {
     }
 
     // Obtener membresía activa del cliente
+
     public function getMembresiaActiva() {
         // En lugar de hacer una consulta directa, vamos a aprovechar el método whereAll de ClienteMembresia
         // y luego filtrar para encontrar la membresía activa
@@ -62,4 +63,5 @@ class Cliente extends ActiveRecord {
 
         return $membresiaActiva;
     }
+
 }
