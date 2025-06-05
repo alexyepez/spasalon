@@ -120,6 +120,7 @@ $router->get('/admin/recordatorios/crear', [RecordatorioController::class, 'crea
 $router->post('/admin/recordatorios/crear', [RecordatorioController::class, 'crear']);
 $router->post('/admin/eliminar-recordatorio', [RecordatorioController::class, 'eliminar']);
 $router->get('/admin/recordatorios/enviar', [RecordatorioController::class, 'ejecutarEnvio']);
+$router->post('/admin/recordatorios/ejecutar-envio', [RecordatorioController::class, 'ejecutarEnvio']);
 $router->post('/admin/enviar-recordatorio', [RecordatorioController::class, 'enviarRecordatorioIndividual']);
 
 // Ruta para confirmar citas desde recordatorios

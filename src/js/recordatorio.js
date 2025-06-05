@@ -8,6 +8,60 @@ function iniciarRecordatorios() {
     const botonesEnviarRecordatorio = document.querySelectorAll('.enviar-recordatorio');
     const botonesFiltro = document.querySelectorAll('.boton-filtro');
 
+    // CAMBIO: Seleccionar TODOS los enlaces que apunten a la misma URL (tanto el botón superior como el enlace del menú)
+    const botonesEnviarPendientes = document.querySelectorAll('a[href="/admin/recordatorios/enviar"]');
+
+    if (botonesEnviarPendientes.length > 0) {
+        // Asignar el mismo comportamiento a todos los enlaces que apunten a /admin/recordatorios/enviar
+        botonesEnviarPendientes.forEach(boton => {
+            boton.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                if (confirm('¿Deseas intentar enviar todos los recordatorios pendientes para hoy?')) {
+                    // Mostrar mensaje de espera
+                    mostrarAlerta('Enviando recordatorios, por favor espera...', 'exito', '.contenedor-alertas');
+
+                    fetch('/admin/recordatorios/ejecutar-envio', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        }
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Error en la respuesta del servidor: ' + response.status);
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            console.log('Respuesta del servidor:', data); // Para depuración
+
+                            if (data.resultado) {
+                                if (data.hayPendientes) {
+                                    mostrarAlerta(data.mensaje || 'Recordatorios procesados exitosamente.', 'exito', '.contenedor-alertas');
+                                } else {
+                                    mostrarAlerta(data.mensaje || 'No hay recordatorios pendientes para enviar.', 'info', '.contenedor-alertas');
+                                }
+
+                                // Recargar la página para reflejar los cambios
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 3000);
+                            } else {
+                                mostrarAlerta(data.mensaje || 'Error al procesar los recordatorios pendientes.', 'error', '.contenedor-alertas');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error en la solicitud de enviar pendientes:', error);
+                            mostrarAlerta('Error de conexión al intentar enviar recordatorios pendientes: ' + error.message, 'error', '.contenedor-alertas');
+                        });
+                }
+            });
+        });
+    }
+
+    // El resto del código permanece igual...
     // Una única declaración para los selectores
     const selectCliente = document.querySelector('#cliente_id');
     const selectCita = document.querySelector('#cita_id');
@@ -89,18 +143,35 @@ function iniciarRecordatorios() {
 
 function aplicarFiltro(filtro) {
     const recordatorios = document.querySelectorAll('.recordatorio');
+    let recordatoriosPendientesVisibles = 0;
 
     recordatorios.forEach(recordatorio => {
         if (filtro === 'todos') {
             recordatorio.style.display = 'flex';
+            if (recordatorio.classList.contains('recordatorio-pendiente')) {
+                recordatoriosPendientesVisibles++;
+            }
         } else if (filtro === 'pendientes' && recordatorio.classList.contains('recordatorio-pendiente')) {
             recordatorio.style.display = 'flex';
+            recordatoriosPendientesVisibles++;
         } else if (filtro === 'enviados' && recordatorio.classList.contains('recordatorio-enviado')) {
             recordatorio.style.display = 'flex';
         } else {
             recordatorio.style.display = 'none';
         }
     });
+
+    // Actualizar el botón de enviar pendientes según el filtro seleccionado
+    const btnEnviarPendientes = document.querySelector('a.boton[href="/admin/recordatorios/enviar"]');
+    if (btnEnviarPendientes) {
+        if (recordatoriosPendientesVisibles === 0 && (filtro === 'pendientes' || filtro === 'todos')) {
+            btnEnviarPendientes.classList.add('deshabilitado');
+            btnEnviarPendientes.title = 'No hay recordatorios pendientes para enviar';
+        } else {
+            btnEnviarPendientes.classList.remove('deshabilitado');
+            btnEnviarPendientes.title = 'Enviar todos los recordatorios pendientes';
+        }
+    }
 }
 
 function mostrarDetallesCita() {
@@ -202,5 +273,5 @@ function mostrarAlerta(mensaje, tipo, elemento) {
     // Eliminar después de 3 segundos
     setTimeout(() => {
         alerta.remove();
-    }, 3000);
+    }, 2000);
 }
