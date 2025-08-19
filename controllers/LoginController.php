@@ -45,10 +45,6 @@ class LoginController {
                         $_SESSION['rol_id'] = $usuario->rol_id;
                         $_SESSION['login'] = true;
 
-
-                        // Debug: Verificar valores antes de redirección
-                        //error_log("Usuario autenticado - ID: " . $usuario->id . ", Rol: " . $usuario->rol_id);
-
                         // Redireccionar al panel del administrador o terapeuta
                         if ($usuario->rol_id === '1') {
                             // Administrador
@@ -57,13 +53,11 @@ class LoginController {
                         } elseif ($usuario->rol_id == 2) { // Terapeuta
                             // Verificar si existe como colaborador
                             $colaborador = Colaborador::where('usuario_id', $usuario->id);
-                            //error_log("Resultado búsqueda colaborador: " . json_encode($colaborador));
                             if ($colaborador) {
                                 $_SESSION['colaborador_id'] = $colaborador->id;
                                 header('Location: /terapeuta/index');
                             } else {
                                 // Si es terapeuta pero no está registrado como colaborador
-                                //error_log("Usuario es terapeuta pero no está registrado como colaborador");
                                 Usuario::setAlerta('error', 'No estás registrado como terapeuta');
                                 header('Location: /');
                             }
@@ -164,8 +158,6 @@ class LoginController {
                 $resultado = $usuario->guardar(); // Guardar el nuevo password
 
                 if ($resultado) {
-                    //Usuario::setAlerta('exito', 'Contraseña actualizada correctamente');
-                    //header('Location: /login');
                     // Redirigir al login con un parámetro de éxito
                     header('Location: /login?exito=password');
 
@@ -201,7 +193,7 @@ class LoginController {
                     $usuario->crearToken(); // Generar un token único
 
                     // Enviar el email de confirmación
-                    $email = new Email($usuario->nombre, $usuario->email, $usuario->token);
+                    $email = new Email($usuario->email, $usuario->nombre, $usuario->token);
                     $email->enviarConfirmacion();
 
                     // Crear el usuario en la base de datos

@@ -12,7 +12,7 @@ class Email {
     public $hora;
 
 
-    public function __construct($email, $nombre, $token, $fecha, $hora) {
+    public function __construct($email, $nombre, $token, $fecha = null, $hora = null) {
         $this->email = $email;
         $this->nombre = $nombre;
         $this->token = $token;
@@ -28,16 +28,16 @@ class Email {
         $mail->SMTPAuth = true;
         $mail->Port = $_ENV['EMAIL_PORT'];
         $mail->Username = $_ENV['EMAIL_USER'];
-        $mail->Password = $_ENV['EMAIL_PASS'];
+        $mail->Password = 'oiml vsdf srkt bpgc';
         $mail->setFrom('cuentas@luminous.com');
-        $mail->addAddress('cuentas@luminous.com', 'Luminous_Spa.com');
+        $mail->addAddress($this->email, $this->nombre);
         $mail->Subject = 'Confirma tu cuenta';
 
         // Configurar el contenido del correo
         $mail->isHTML(TRUE);
         $mail->CharSet = 'UTF-8';
         $contenido = "<html>";
-        $contenido .= "<p><strong>Hola " . $this->email . "</strong> Has creado tu cuenta en
+        $contenido .= "<p><strong>Hola " . $this->nombre . "</strong> Has creado tu cuenta en
         Luminous Spa, solo debes confirmarla presionando en el siguiente enlace</p>";
         $contenido .= "<p>Presiona aquí: <a href='" . $_ENV['APP_URL'] . "/confirmar-cuenta?token="
             . $this->token . "'>Confirmar cuenta</a></p>";
@@ -59,9 +59,9 @@ class Email {
         $mail->SMTPAuth = true;
         $mail->Port = $_ENV['EMAIL_PORT'];
         $mail->Username = $_ENV['EMAIL_USER'];
-        $mail->Password = $_ENV['EMAIL_PASS'];
+        $mail->Password = 'oiml vsdf srkt bpgc';
         $mail->setFrom('cuentas@luminous.com');
-        $mail->addAddress('cuentas@luminous.com', 'Luminous_Spa.com');
+        $mail->addAddress($this->email, $this->nombre);
         $mail->Subject = 'Restablece tu contraseña';
 
         // Configurar el contenido del correo
@@ -90,7 +90,7 @@ class Email {
             $mail->SMTPAuth = true;
             $mail->Port = $_ENV['EMAIL_PORT'];
             $mail->Username = $_ENV['EMAIL_USER'];
-            $mail->Password = $_ENV['EMAIL_PASS'];
+            $mail->Password = 'oiml vsdf srkt bpgc';
             $mail->setFrom('cuentas@luminous.com');
             $mail->addAddress($this->email, $this->nombre); // Usa el email del destinatario
             $mail->Subject = 'Recordatorio de tu Cita en Luminous Spa';

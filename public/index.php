@@ -8,6 +8,7 @@ if (strpos($_SERVER['REQUEST_URI'], '/api/') === 0) {
     //ini_set('error_log', __DIR__ . '/../logs/php_errors.log'); // Establecer archivo de registro
 }
 
+
 require_once __DIR__ . '/../includes/app.php';
 require_once __DIR__ . '/../vendor/autoload.php';
 require __DIR__ . '/../helpers.php';
