@@ -630,10 +630,11 @@
     </div>
 </footer>
 
-<!-- Botón del Chatbot mejorado -->
+<!-- Botón del Chatbot mejorado
 <div class="chatbot-button" onclick="toggleChat()">
     <i class="bi bi-chat-dots"></i>
 </div>
+-->
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -661,7 +662,7 @@
         const onLoad = function() {
             const script = document.createElement("script");
             script.src = "https://www.chatbase.co/embed.min.js";
-            script.id = "hZsvZ968DcfMCqDqWPot6";
+            script.id = "aq56n2EjcLyTiUysOTwSQ";
             script.domain = "www.chatbase.co";
             document.body.appendChild(script)
         };
@@ -673,6 +674,7 @@
         }
     })();
 </script>
+
 
 <!-- Scripts para navegación y chatbot -->
 <script>

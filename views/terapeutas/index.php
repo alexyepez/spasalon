@@ -146,6 +146,14 @@ use Model\Familiar;
                                 </button>
                                 <span class="badge cancelada">Cancelada ✗</span>
                             <?php endif; ?>
+                            <!-- Nuevo botón para ver recomendaciones (solo si la cita está confirmada) -->
+                            <?php if($cita->estado == 1 && isset($cita->cliente) && $cita->cliente): ?>
+                                <button class="boton-recomendacion ver-recomendaciones"
+                                        data-cliente-id="<?php echo htmlspecialchars($cita->cliente_id); ?>"
+                                        data-cliente-nombre="<?php echo htmlspecialchars($cita->cliente->getUsuario()->nombre . ' ' . $cita->cliente->getUsuario()->apellido); ?>">
+                                    <i class="fas fa-magic"></i> Recomendaciones IA
+                                </button>
+                            <?php endif; ?>
                         </div>
                     </div>
                 <?php endforeach; ?>
@@ -190,6 +198,54 @@ use Model\Familiar;
         <button id="anterior" class="boton">&laquo; Anterior</button>
         <button id="siguiente" class="boton">Siguiente &raquo;</button>
     </div>
+
+    <!-- Modal para Recomendaciones de IA -->
+    <div id="modal-recomendaciones" class="modal-recomendaciones" style="display: none;">
+        <div class="modal-contenido">
+            <div class="modal-encabezado">
+                <h3>Recomendaciones Personalizadas</h3>
+                <button type="button" id="btn-cerrar-modal-recomendaciones" class="btn-cerrar">&times;</button>
+            </div>
+
+            <div class="modal-cuerpo">
+                <p id="cliente-recomendaciones-nombre" class="text-center"></p>
+
+                <!-- Loader para cuando se están generando las recomendaciones -->
+                <div id="recomendaciones-loading" class="text-center" style="display: none;">
+                    <div class="spinner">
+                        <div class="bounce1"></div>
+                        <div class="bounce2"></div>
+                        <div class="bounce3"></div>
+                    </div>
+                    <p>Generando recomendaciones personalizadas...</p>
+                </div>
+
+                <!-- Contenedor para las recomendaciones generadas -->
+                <div id="recomendaciones-contenedor" class="recomendaciones-grid">
+                    <!-- Se llenará con JavaScript -->
+                </div>
+
+                <!-- Mensaje cuando no hay recomendaciones -->
+                <div id="recomendaciones-vacio" class="alerta info text-center" style="display: none;">
+                    <p>No hay recomendaciones disponibles para este cliente.</p>
+                </div>
+
+                <!-- Mensaje de error -->
+                <div id="recomendaciones-error" class="alerta error text-center" style="display: none;">
+                    <p>Ocurrió un error al obtener las recomendaciones.</p>
+                </div>
+            </div>
+
+            <div class="modal-pie">
+                <button type="button" id="btn-generar-recomendaciones" class="boton">
+                    Generar Nuevas Recomendaciones
+                </button>
+                <button type="button" id="btn-cerrar-recomendaciones" class="boton-cancelar">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Modal para Registrar Tratamiento -->
@@ -223,6 +279,7 @@ $script = "
     window.terapeutaId = " . $terapeutaIdScript . ";
 </script>
 <script src='/build/js/terapeuta.js'></script>
+<script src='/build/js/recomendaciones.js'></script>
 ";
 
 ?>

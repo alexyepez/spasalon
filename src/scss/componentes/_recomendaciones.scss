@@ -1,0 +1,272 @@
+@use 'base/variables' as v;
+@use 'base/mixins' as m;
+
+.modal-recomendaciones {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: none;
+  z-index: 1000;
+  overflow-y: auto;
+}
+
+.modal-contenido {
+  background-color: white;
+  margin: 5% auto;
+  padding: 0;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: modalFadeIn 0.3s ease-out;
+
+  @keyframes modalFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+.modal-encabezado {
+  background-color: v.$indigo;
+  color: white;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+
+  h3 {
+    margin: 0;
+    font-size: 2.2rem;
+  }
+
+  .btn-cerrar {
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    color: white;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: scale(1.2);
+      color: v.$rojo;
+    }
+  }
+}
+
+.modal-cuerpo {
+  padding: 2rem;
+  font-size: 1.6rem;
+}
+
+.modal-pie {
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  background-color: #f8f9fa;
+  border-top: 1px solid #e9ecef;
+  position: sticky;
+  bottom: 0;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+
+  button {
+    padding: 0.75rem 1.5rem;
+    font-size: 1.6rem;
+  }
+}
+
+.recomendaciones-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.recomendacion-tarjeta {
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  background-color: white;
+  border-left: 5px solid #ccc;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  }
+
+  &.prioridad-muy-alta {
+    border-left-color: #e53e3e;
+  }
+
+  &.prioridad-alta {
+    border-left-color: #dd6b20;
+  }
+
+  &.prioridad-media {
+    border-left-color: #d69e2e;
+  }
+
+  &.prioridad-baja {
+    border-left-color: #38a169;
+  }
+
+  &.prioridad-muy-baja {
+    border-left-color: #3182ce;
+  }
+}
+
+.recomendacion-encabezado {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.5rem;
+}
+
+.recomendacion-prioridad {
+  font-size: 1.6rem;
+  color: #f0b429;
+  letter-spacing: 1px;
+}
+
+.recomendacion-servicio {
+  margin-bottom: 1rem;
+
+  h4 {
+    margin: 0 0 0.5rem;
+    font-size: 1.8rem;
+    color: v.$indigo;
+  }
+
+  .recomendacion-meta {
+    font-size: 1.8rem;
+    color: #666;
+  }
+}
+
+.recomendacion-descripcion {
+  margin-bottom: 1rem;
+
+  p {
+    margin: 0;
+    line-height: 1.6;
+    font-size: 1.6rem;
+  }
+}
+
+.recomendacion-justificacion {
+  margin-bottom: 1rem;
+  line-height: 1.5;
+
+
+  details {
+    border: 1px solid #e9ecef;
+    border-radius: 5px;
+    padding: 0.5rem;
+
+    summary {
+      cursor: pointer;
+      color: v.$indigo;
+      font-weight: bold;
+      font-size: 1.6rem;
+
+      &:hover {
+        color: v.$violeta;
+      }
+    }
+
+    p {
+      margin: 0.5rem 0 0;
+      padding-top: 0.5rem;
+      border-top: 1px dashed #e9ecef;
+      font-size: 1.4rem;
+      color: #666;
+      line-height: 1.4;
+    }
+  }
+}
+
+.recomendacion-meta {
+  text-align: right;
+  font-size: 1.8rem !important;
+
+  small {
+    color: #999;
+    font-size: 1.2rem;
+  }
+}
+
+// Spinner para carga
+.spinner {
+  margin: 2rem auto;
+  width: 70px;
+  text-align: center;
+
+  > div {
+    width: 18px;
+    height: 18px;
+    background-color: v.$indigo;
+    border-radius: 100%;
+    display: inline-block;
+    animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+  }
+
+  .bounce1 {
+    animation-delay: -0.32s;
+  }
+
+  .bounce2 {
+    animation-delay: -0.16s;
+  }
+}
+
+@keyframes sk-bouncedelay {
+  0%, 80%, 100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1.0);
+  }
+}
+
+// Estilos para el botón de recomendaciones
+.boton-recomendacion {
+  background-color: v.$violeta;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: darken(v.$violeta, 10%);
+    transform: translateY(-2px);
+  }
+
+  i {
+    font-size: 1.1rem;
+  }
+}

@@ -24,6 +24,7 @@ use Controllers\ProveedorController;
 use Controllers\RecordatorioController;
 use Controllers\MembresiaController;
 use Controllers\ClienteMembresiaController;
+use Controllers\RecomendacionController;
 use MVC\Router;
 $router = new Router();
 
@@ -140,6 +141,11 @@ $router->get('/admin/clientes/membresias', [ClienteMembresiaController::class, '
 $router->get('/admin/clientes/membresia/crear', [ClienteMembresiaController::class, 'crear']);
 $router->post('/admin/clientes/membresia/crear', [ClienteMembresiaController::class, 'crear']);
 $router->post('/admin/clientes/membresias/eliminar', [ClienteMembresiaController::class, 'eliminar']);
+
+// Rutas para recomendaciones IA
+$router->post('/api/recomendaciones/generar', [RecomendacionController::class, 'generarRecomendaciones']);
+$router->post('/api/recomendaciones/obtener', [RecomendacionController::class, 'obtenerRecomendaciones']);
+
 
 // Comprueba y valida las rutas, que existan y les asigna las funciones del Controlador
 $router->comprobarRutas();
