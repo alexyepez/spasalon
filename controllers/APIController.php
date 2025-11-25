@@ -53,7 +53,7 @@ class APIController {
         $resultado = $familiar->guardar();
         echo json_encode($resultado);
         //echo json_encode(['resultado' => $resultado]);
-        
+
     }
 
     // Eliminar un familiar
@@ -132,10 +132,10 @@ class APIController {
         // Asignar colaborador basado en el primer servicio
         $servicioPrincipal = Servicio::find($servicios[0]);
         $colaborador_id = null;
-        
+
         if ($servicioPrincipal) {
             $nombreServicio = strtolower($servicioPrincipal->nombre);
-            
+
             // Definir mapeo de servicios a especialidades
             $servicioEspecialidad = [
                 'masaje' => 'Masajista',
@@ -145,7 +145,7 @@ class APIController {
                 'pedicura' => 'Pedicurista',
                 'depilación' => 'Esteticista'
             ];
-            
+
             // Servicios que pueden usar terapeuta genérico
             $serviciosGenericos = ['exfoliación', 'aromaterapia', 'piedras'];
 
@@ -159,7 +159,7 @@ class APIController {
                     }
                 }
             }
-            
+
             // Si no se encontró, verificar servicios genéricos
             if (!$colaborador_id) {
                 foreach ($serviciosGenericos as $palabraClave) {
@@ -169,7 +169,7 @@ class APIController {
                         if (empty($colaboradores)) {
                             $colaboradores = Colaborador::all();
                         }
-                        
+
                         if (!empty($colaboradores)) {
                             $colaborador_id = $colaboradores[0]->id;
                         }
@@ -293,6 +293,132 @@ class APIController {
         exit; // Asegurarse de que no se envíe ningún otro contenido
     }
 
+
+    // Función para obtener todas las citas de un cliente
+    public static function obtenerCitasCliente() {
+        // Establecer el tipo de contenido como JSON
+    }
+
+    public static function obtenerCita() {
+        header('Content-Type: application/json');
+
+        try {
+            // Obtener ID de la cita de la URL
+            $citaId = $_GET['id'] ?? null;
+
+            if (!$citaId) {
+                echo json_encode(['error' => 'ID de cita no proporcionado']);
+                return;
+            }
+
+            // Buscar la cita
+            $cita = Cita::find($citaId);
+
+            if (!$cita) {
+                echo json_encode(['error' => 'Cita no encontrada']);
+                return;
+            }
+
+            // Verificar que el terapeuta actual tenga acceso a esta cita
+            // Esto asume que tienes un sistema de sesiones configurado
+            if (isset($_SESSION['id']) && isset($_SESSION['admin'])) {
+                $usuarioId = $_SESSION['id'];
+                $tipoUsuario = $_SESSION['admin'];
+
+                // Si es terapeuta (2) verificamos que sea el asignado a la cita
+                // Si es admin (0) tiene acceso a todas las citas
+                if ($tipoUsuario != 0 && $tipoUsuario == 2 && $cita->colaborador_id != $usuarioId) {
+                    echo json_encode(['error' => 'No tiene permisos para ver esta cita']);
+                    return;
+                }
+            } else {
+                echo json_encode(['error' => 'Usuario no autenticado']);
+                return;
+            }
+
+            // Obtener datos adicionales para la cita
+            // 1. Obtener información del cliente desde la tabla usuarios
+            $consultaCliente = "SELECT u.nombre as nombre, u.apellido as apellido, u.email as email 
+                            FROM clientes c 
+                            INNER JOIN usuarios u ON c.usuario_id = u.id 
+                            WHERE c.id = {$cita->cliente_id}";
+
+            $cliente = Cita::SQL($consultaCliente);
+
+            // 2. Obtener información del familiar si existe
+            $familiar = null;
+            if (!empty($cita->familiar_id)) {
+                $familiar = Familiar::find($cita->familiar_id);
+            }
+
+            // 3. Obtener servicios de la cita
+            $consultaServicios = "SELECT s.* FROM citas_servicios cs 
+                              INNER JOIN servicios s ON cs.servicio_id = s.id 
+                              WHERE cs.cita_id = {$citaId}";
+
+            $servicios = Cita::SQL($consultaServicios);
+
+            // 4. Obtener motivo de cancelación si está cancelada
+            $motivoCancelacion = null;
+            if ($cita->estado == 2) { // Si está cancelada
+                $consultaCancelacion = "SELECT motivo FROM citas_cancelaciones 
+                                   WHERE cita_id = {$citaId}";
+
+                $cancelacion = Cita::SQL($consultaCancelacion);
+                if (!empty($cancelacion)) {
+                    $motivoCancelacion = $cancelacion[0]['motivo'];
+                }
+            }
+
+            // Preparar la respuesta
+            $respuesta = [
+                'id' => $cita->id,
+                'fecha' => $cita->fecha,
+                'hora' => $cita->hora,
+                'estado' => $cita->estado,
+                'cliente_id' => $cita->cliente_id,
+                'colaborador_id' => $cita->colaborador_id
+            ];
+
+            // Añadir información del cliente si se encontró
+            if (!empty($cliente)) {
+                $respuesta['cliente_nombre'] = $cliente[0]['nombre'];
+                $respuesta['cliente_apellido'] = $cliente[0]['apellido'];
+                $respuesta['cliente_email'] = $cliente[0]['email'];
+            }
+
+            // Añadir información del familiar si existe
+            if ($familiar) {
+                $respuesta['familiar_id'] = $familiar->id;
+                $respuesta['familiar_nombre'] = $familiar->nombre;
+                $respuesta['familiar_apellido'] = $familiar->apellido;
+                $respuesta['familiar_parentesco'] = $familiar->parentesco;
+            }
+
+            // Añadir servicios
+            $serviciosFormateados = [];
+            foreach ($servicios as $servicio) {
+                $serviciosFormateados[] = [
+                    'id' => $servicio['id'],
+                    'nombre' => $servicio['nombre'],
+                    'precio' => $servicio['precio'],
+                    'duracion' => isset($servicio['duracion']) ? $servicio['duracion'] : 60  // Asumiendo duración por defecto
+                ];
+            }
+            $respuesta['servicios'] = $serviciosFormateados;
+
+            // Añadir motivo de cancelación si existe
+            if ($motivoCancelacion) {
+                $respuesta['motivo_cancelacion'] = $motivoCancelacion;
+            }
+
+            echo json_encode($respuesta);
+
+        } catch (Exception $e) {
+            echo json_encode(['error' => 'Error del servidor: ' . $e->getMessage()]);
+        }
+    }
+
     // Obtener tratamientos de un terapeuta
     public static function tratamientos() {
         // Establecer el tipo de contenido como JSON
@@ -365,4 +491,3 @@ class APIController {
         }
     }
 }
-

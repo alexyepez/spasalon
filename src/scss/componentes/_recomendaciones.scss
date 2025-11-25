@@ -1,5 +1,6 @@
 @use 'base/variables' as v;
 @use 'base/mixins' as m;
+@use "sass:color";
 
 .modal-recomendaciones {
   position: fixed;
@@ -262,7 +263,7 @@
   transition: all 0.3s ease;
 
   &:hover {
-    background-color: darken(v.$violeta, 10%);
+    background-color: color.scale(v.$violeta, $lightness: -10%);
     transform: translateY(-2px);
   }
 

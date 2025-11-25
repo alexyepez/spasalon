@@ -6,8 +6,8 @@ if (strpos($_SERVER['REQUEST_URI'], '/api/') === 0) {
     ini_set('display_errors', 0); // No mostrar errores al navegador
     //ini_set('log_errors', 1); // Habilitar registro de errores
     //ini_set('error_log', __DIR__ . '/../logs/php_errors.log'); // Establecer archivo de registro
+    //error_reporting(E_ALL);
 }
-
 
 require_once __DIR__ . '/../includes/app.php';
 require_once __DIR__ . '/../vendor/autoload.php';
@@ -95,6 +95,9 @@ $router->post('/admin/actualizar-terapeuta', [AdminController::class, 'actualiza
 $router->post('/admin/eliminar-terapeuta', [AdminController::class, 'eliminarTerapeuta']);
 $router->post('/admin/asignar-cita', [AdminController::class, 'asignarCita']);
 $router->get('/admin/historial-citas', [Controllers\AdminController::class, 'historialCitas']);
+
+// Ruta para obtener detalles de una cita
+$router->get('/api/cita', [APIController::class, 'obtenerCita']);
 
 // Rutas para gestión de clientes
 $router->get('/admin/gestionar-clientes', [ClienteController::class, 'index']);

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Prueba de API - AJAX</title>
+</head>
+<body>
+    <h1>Prueba de API con AJAX</h1>
+    
+    <button id="btnProbar">Probar API Directa</button>
+    <button id="btnProbarOriginal">Probar API Original</button>
+    
+    <div id="resultado" style="margin-top: 20px; padding: 10px; border: 1px solid #ccc;"></div>
+    
+    <script>
+        document.getElementById('btnProbar').addEventListener('click', async function() {
+            const resultadoDiv = document.getElementById('resultado');
+            resultadoDiv.innerHTML = 'Cargando...';
+            
+            try {
+                // Usar la nueva ruta directa
+                const url = '/api-cita.php?id=42';
+                console.log('Solicitando:', url);
+                
+                const respuesta = await fetch(url);
+                
+                if (!respuesta.ok) {
+                    throw new Error(`Error HTTP: ${respuesta.status}`);
+                }
+                
+                const datos = await respuesta.json();
+                
+                // Mostrar respuesta
+                resultadoDiv.innerHTML = '<h3>Respuesta:</h3><pre>' + 
+                    JSON.stringify(datos, null, 2) + '</pre>';
+                
+                console.log('Datos recibidos:', datos);
+            } catch (error) {
+                resultadoDiv.innerHTML = '<h3>Error:</h3><p>' + error.message + '</p>';
+                console.error('Error:', error);
+            }
+        });
+
+        document.getElementById('btnProbarOriginal').addEventListener('click', async function() {
+            const resultadoDiv = document.getElementById('resultado');
+            resultadoDiv.innerHTML = 'Cargando...';
+            
+            try {
+                // Usar la ruta original
+                const url = '/api/cita?id=42';
+                console.log('Solicitando:', url);
+                
+                const respuesta = await fetch(url);
+                
+                if (!respuesta.ok) {
+                    throw new Error(`Error HTTP: ${respuesta.status}`);
+                }
+                
+                const datos = await respuesta.json();
+                
+                // Mostrar respuesta
+                resultadoDiv.innerHTML = '<h3>Respuesta:</h3><pre>' + 
+                    JSON.stringify(datos, null, 2) + '</pre>';
+                
+                console.log('Datos recibidos:', datos);
+            } catch (error) {
+                resultadoDiv.innerHTML = '<h3>Error:</h3><p>' + error.message + '</p>';
+                console.error('Error:', error);
+            }
+        });
+    </script>
+</body>
+</html>

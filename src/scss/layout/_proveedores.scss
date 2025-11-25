@@ -1,5 +1,6 @@
 @use 'base/variables' as v;
 @use 'base/mixins' as m;
+@use "sass:color";
 
 .listado-proveedores {
   margin-top: 2rem;
@@ -90,7 +91,7 @@
         transition: background-color 0.3s ease;
 
         &:hover {
-          background-color: darken(v.$rojo, 10%);
+          background-color: color.scale(v.$rojo, $lightness: -10%);
         }
       }
     }

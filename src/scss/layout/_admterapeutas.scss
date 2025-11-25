@@ -1,6 +1,7 @@
 
 @use 'base/variables' as v;
 @use 'base/mixins' as m;
+@use "sass:color";
 
 // Extendemos las propiedades básicas de servicios
 .listado-terapeutas {
@@ -41,7 +42,7 @@
   }
 
   &:not(:last-child) {
-    border-bottom: 1px solid darken(v.$blanco, 10%);
+    background-color: color.scale(v.$blanco, $lightness: -10%);
   }
 
   h3 {
@@ -105,7 +106,7 @@
 
 
     select {
-      border: 1px solid darken(v.$blanco, 20%);
+      background-color: color.scale(v.$blanco, $lightness: -20%);
       border-radius: 0.5rem;
       padding: 1rem;
       width: 100%;

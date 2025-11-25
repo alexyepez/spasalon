@@ -280,11 +280,99 @@ async function registrarTratamiento(citaId) {
     }
 }
 
+/*
 function verDetalles(citaId) {
     console.log('Viendo detalles de cita:', citaId);
     // Lógica para ver detalles (puede ser un modal o redirigir)
     alert(`Ver detalles para cita ID: ${citaId}. Implementar lógica.`);
 }
+*/
+
+// Función para ver detalles de una cita
+async function verDetalles(citaId) {
+    console.log('Viendo detalles de cita:', citaId);
+
+    // Mostrar indicador de carga
+    Swal.fire({
+        title: 'Cargando...',
+        text: 'Obteniendo detalles de la cita',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+
+    try {
+        const url = `/api-cita.php?id=${citaId}`;
+        console.log('URL de petición:', url);
+
+        const respuesta = await fetch(url);
+        console.log('Respuesta status:', respuesta.status);
+
+        // Intentamos primero obtener la respuesta como texto para debugging
+        const textoRespuesta = await respuesta.text();
+        console.log('Texto respuesta:', textoRespuesta);
+
+        // Intentamos parsear la respuesta como JSON
+        let cita;
+        try {
+            cita = JSON.parse(textoRespuesta);
+        } catch (e) {
+            throw new Error(`Respuesta no válida: ${textoRespuesta.substring(0, 100)}...`);
+        }
+
+        if (cita.error) {
+            throw new Error(cita.error);
+        }
+
+        // Construir HTML para el modal
+        let contenidoHTML = `
+            <div class="detalles-cita">
+                <p><strong>Cliente:</strong> ${cita.cliente_nombre} ${cita.cliente_apellido}</p>
+                <p><strong>Fecha:</strong> ${cita.fecha}</p>
+                <p><strong>Hora:</strong> ${cita.hora}</p>
+                <p><strong>Estado:</strong> ${
+            cita.estado === 0 ? 'Pendiente' :
+                cita.estado === 1 ? 'Confirmada' : 'Cancelada'
+        }</p>
+                
+                <h4>Servicios:</h4>
+                <ul class="lista-servicios">
+        `;
+
+        // Agregar cada servicio
+        cita.servicios.forEach(servicio => {
+            contenidoHTML += `
+                <li>${servicio.nombre} - $${servicio.precio}</li>
+            `;
+        });
+
+        contenidoHTML += `
+                </ul>
+            </div>
+        `;
+
+        // Mostrar modal con detalles
+        Swal.fire({
+            title: `Cita #${citaId}`,
+            html: contenidoHTML,
+            icon: 'info',
+            confirmButtonColor: '#ff7f00',
+            confirmButtonText: 'Cerrar'
+        });
+
+    } catch (error) {
+        console.error('Error:', error);
+        Swal.fire({
+            title: 'Error',
+            text: `No se pudieron cargar los detalles: ${error.message}`,
+            icon: 'error',
+            confirmButtonColor: '#ff7f00',
+            confirmButtonText: 'OK'
+        });
+    }
+}
+
 
 function asignarEventosBotonesCitas() {
     // Botones de registro de tratamiento
@@ -689,8 +777,8 @@ function inicializarIndicadoresScrollHistorial() {
     //if (!listadoHistorial) return;
 
     // Verificar si ya existen los indicadores, y si no, crearlos
-    let indicadorAbajo = document.querySelector('#historial-scroll-down');
-    let indicadorArriba = document.querySelector('#historial-scroll-up');
+    //let indicadorAbajo = document.querySelector('#historial-scroll-down');
+    //let indicadorArriba = document.querySelector('#historial-scroll-up');
 
     if (!indicadorAbajo) {
         indicadorAbajo = document.createElement('div');

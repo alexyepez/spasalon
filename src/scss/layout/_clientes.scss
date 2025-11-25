@@ -1,5 +1,6 @@
 @use 'base/variables' as v;
 @use 'base/mixins' as m;
+@use "sass:color";
 
 // Extendemos las propiedades básicas de servicios
 .listado-clientes {
@@ -40,7 +41,7 @@
   }
 
   &:not(:last-child) {
-    border-bottom: 1px solid darken(v.$blanco, 10%);
+    border-bottom: 1px solid color.scale(v.$blanco, $lightness: -10%);
   }
 
   h3 {

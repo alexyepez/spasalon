@@ -2,6 +2,7 @@
 
 @use 'base/variables' as v;
 @use 'base/mixins' as m;
+@use "sass:color";
 
 .listado-recordatorios {
   margin-top: 2rem;
@@ -41,7 +42,7 @@
       transition: all 0.3s ease;
 
       &:hover {
-        background-color: darken(v.$gris, 10%);
+        background-color: color.scale(v.$gris, $lightness: -10%);
       }
 
       &.activo {
@@ -129,7 +130,7 @@
         transition: background-color 0.3s ease;
 
         &:hover {
-          background-color: darken(v.$rojo, 10%);
+          background-color: color.scale(v.$rojo, $lightness: -10%);
         }
       }
     }

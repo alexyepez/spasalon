@@ -1,6 +1,5 @@
 @use 'base/variables' as v;
 @use 'base/mixins' as m;
-
 @use 'sass:color';
 
 .contenedor-app {
@@ -88,7 +87,7 @@
 .barra-admin {
     display: flex;
     justify-content: space-between;
-    background-color: darken(v.$gris, 10);
+    background-color: color.scale(v.$gris, $lightness: -10%);
     padding: 0.5rem;
     border-radius: 5px;
     margin-bottom: 2rem;
@@ -128,7 +127,7 @@
     justify-content: space-between;
 
     &:hover {
-        background-color: darken(v.$naranja, 5);
+        background-color: color.scale(v.$naranja, $lightness: -5%);
     }
 
     @include m.tablet {
@@ -156,12 +155,12 @@
         transition: background-color 0.3s;
 
         &:hover {
-            background-color: lighten(v.$gris, 40);
+            background-color: color.adjust(v.$gris, $lightness: 40%);
             color: v.$naranja;
         }
 
         &.active {
-            background-color: lighten(v.$gris, 40);
+            background-color: color.adjust(v.$gris, $lightness: 40%);
             color: v.$naranja;
             border-left: 3px solid v.$naranja;
         }

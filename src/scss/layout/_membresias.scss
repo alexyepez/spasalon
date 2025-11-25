@@ -1,5 +1,6 @@
 @use 'base/variables' as v;
 @use 'base/mixins' as m;
+@use "sass:color";
 
 .alerta-contenedor-info {
   .alerta.info {
@@ -232,7 +233,7 @@
   border-radius: 0.5rem;
 
   &:hover {
-    background-color: darken(v.$gris_oscuro, 10%);
+    background-color: color.scale(v.$gris_oscuro, $lightness: -10%);
   }
 }
 
